@@ -44,14 +44,24 @@ namespace CatalogServer.Data
             
         }
 
-        public void DecreaseBookCount(Guid id)
+        public bool DecreaseBookCount(Guid id)
         {
-           var row= _context.Database.ExecuteSqlInterpolated(
-                $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} and CountInStock > 0");
-           if (row == 0)
-           {
-               throw new InvalidOperationException($"Book with id : {id} is out of stock.");
-           }
+            var bookToCheckValue =GetInfoById(id);
+
+            if (bookToCheckValue.CountInStock > 0)
+            {
+                var row = _context.Database.ExecuteSqlInterpolated(
+                    $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} ");
+                return true;
+            }
+
+            return false;
+        }
+
+        public void IncreaseBookCount(Guid id)
+        {
+            var row= _context.Database.ExecuteSqlInterpolated(
+                $"UPDATE Catalogs SET CountInStock= CountInStock + 1 WHERE Id={id} ");
         }
     }
 }

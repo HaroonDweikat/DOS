@@ -92,8 +92,28 @@ namespace CatalogServer.Controllers
                 return NotFound();
             }
             _repo.DecreaseBookCount(id);
+            //TODO
+            // if true logger all ok
+            // if false logger Error the CountInStock are 0
+            
             return NoContent();
         }
+        
+        
+        
+        [HttpPost("Increase/{id}")]
+        public ActionResult IncreaseBookCount(Guid id)
+        {
+            if (_repo.GetInfoById(id) == null)
+            {
+                return NotFound();
+            }
+            _repo.IncreaseBookCount(id);
+
+            return NoContent();
+        }
+        
+        
 
 
 
