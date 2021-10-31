@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CatalogServer.Model
+namespace CatalogServer.DTO
 {
-    public class Book //this class represent the field that we will store it in the database and it's represent the BookInfo
+    public class BookCreateDto// this DTO used to show the field that the client should put in the input request
     {
         [Key]
         public Guid Id { get; set; }
@@ -15,9 +15,5 @@ namespace CatalogServer.Model
         public double BookCost { get; set; }
         [Required]
         public int CountInStock { get; set; }
-       
-       
-        
-        
     }
 }

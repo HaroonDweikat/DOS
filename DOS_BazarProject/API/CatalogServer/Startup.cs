@@ -28,20 +28,27 @@ namespace CatalogServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var serverVersion = new MySqlServerVersion(new Version(8, 0, 25));
-            services.AddControllers();
+           
+            services.AddControllers();//this service used to add controller to the api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CatalogServer", Version = "v1"});
-            });
+            });// Adding Swagger Documentation and Configuring Swagger.
 
-            services.AddDbContext<CatalogContext>(opt=>opt.UseMySql(
-                Configuration.GetConnectionString("CatalogConnection"),serverVersion));
-
+            services.AddDbContext<CatalogContext>(opt =>
+            {
+                opt.UseSqlite(Configuration.GetConnectionString("CatalogConnection"));
+            }); //this service usage is to specify the class which will be add as a DataBase context class
+                // and specfy the DataBase type that we will use in our case is SqlLite
+            
             services.AddScoped<ICatalogRepo, SqlCatalogRepo>();
+            //this service used to map between the interface and it implementation
+            //the Scoped mean that whenever a ICatalogRepo created it will be inject by the SqlCatalogRepo
+            //and it's refare to the lifetime of the service which is connected to Client request (each client has his own serivce)
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-
+            
+            // add AutoMapper service to the server 
 
 
         }
@@ -55,14 +62,17 @@ namespace CatalogServer
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CatalogServer v1"));
             }
+            app.UseRouting(); // allow routing in the server controller
+            
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+            //allow request from any origin using any method
 
-            app.UseHttpsRedirection();
+            app.UseAuthorization();// add Authorization in our http
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });// Map the controller for their endpoints
         }
     }
 }

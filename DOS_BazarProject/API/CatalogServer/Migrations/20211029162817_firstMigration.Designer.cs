@@ -9,35 +9,34 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatalogServer.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20211015110131_firstMigration")]
+    [Migration("20211029162817_firstMigration")]
     partial class firstMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.10");
 
-            modelBuilder.Entity("CatalogServer.Model.Catalog", b =>
+            modelBuilder.Entity("CatalogServer.Model.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("BookCost")
-                        .HasColumnType("double");
+                        .HasColumnType("REAL");
 
                     b.Property<string>("BookName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("BookTopic")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("CountInStock")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

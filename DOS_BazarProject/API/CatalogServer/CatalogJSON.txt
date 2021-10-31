@@ -1,0 +1,31 @@
+ 
+[
+    {
+        "id": "0f8fad5b-d9cb-469f-a165-70867728950e",
+        "bookName": "How to get a good grade in DOS in 40 minutes a day",
+        "bookTopic": "distributed systems",
+        "bookCost": 40,
+        "countInStock": 15
+    },
+    {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "bookName": "RPCs for Noobs",
+        "bookTopic": "distributed systems",
+        "bookCost": 35,
+        "countInStock": 12
+    },
+    {
+        "id": "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
+        "bookName": "Xen and the Art of Surviving Undergraduate School",
+        "bookTopic": "undergraduate school",
+        "bookCost": 23,
+        "countInStock": 14
+    },
+    {
+        "id": "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
+        "bookName": "Cooking for the Impatient Undergrad",
+        "bookTopic": "undergraduate school",
+        "bookCost": 26,
+        "countInStock": 23
+    }
+]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CatalogServer.Data
 {
-    public class SqlCatalogRepo : ICatalogRepo
+    public class SqlCatalogRepo : ICatalogRepo // this class implement the interface that contain the functionality that we have 
     {
         private readonly CatalogContext _context;
 
@@ -34,6 +34,17 @@ namespace CatalogServer.Data
             return _context.Catalogs.FirstOrDefault(p => p.Id == id);
         }
 
+        public void AddBook(Book book)
+        {
+            if (book == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            _context.Catalogs.Add(book);
+        }
+
+
         public bool SaveChanges()
         {
             return (_context.SaveChanges() >= 0);
@@ -44,24 +55,33 @@ namespace CatalogServer.Data
             
         }
 
-        public bool DecreaseBookCount(Guid id)
+        public int DecreaseBookCount(Guid id)
         {
+        
             var bookToCheckValue =GetInfoById(id);
 
-            if (bookToCheckValue.CountInStock > 0)
+            if(bookToCheckValue == null)
+            {
+                return 0;
+            }
+            else if (bookToCheckValue.CountInStock > 0)
             {
                 var row = _context.Database.ExecuteSqlInterpolated(
                     $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} ");
-                return true;
-            }
-
-            return false;
+                return 1;
+            }else
+                return 2;
         }
 
         public void IncreaseBookCount(Guid id)
         {
+            
+
+             
             var row= _context.Database.ExecuteSqlInterpolated(
                 $"UPDATE Catalogs SET CountInStock= CountInStock + 1 WHERE Id={id} ");
+
+               
         }
     }
 }
