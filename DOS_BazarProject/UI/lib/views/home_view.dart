@@ -74,7 +74,12 @@ class _HomeViewState extends State<HomeView> {
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                   ),
-                  const Text('Bazar '),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/');
+                    },
+                    child: Text('Bazar '),
+                  ),
                 ],
               ),
               const SizedBox(width: 50),
