@@ -119,18 +119,59 @@ class Books extends ChangeNotifier {
     return searchedBooks != null ? searchedBooks.toList() : _items.toList();
   }
 
-  findById(String bookId) {
+  Book findById(String bookId) {
+    // String getBookById =
+    //     'http://localhost:5000/api/books/getInfoById/' + bookId;
+    // try {
+    //   final response = await http.get(Uri.parse(getBookById));
+    //   final List<Book> loadedBooks = [];
+    //   final extractedDate = json.decode(response.body) as Map<String, dynamic>;
+    //   if (extractedDate == null) return;
+
+    //   print(extractedDate['id']);
+    //   var findedBook = Book(
+    //     id: extractedDate['id'],
+    //     name: extractedDate['bookName'],
+    //     topic: extractedDate['bookTopic'],
+    //     price: extractedDate['bookCost'],
+    //     countInStock: extractedDate['countInStock'],
+    //   );
+    //   print(findedBook.id);
+    //   return findedBook;
+    // } catch (e) {
+    //   print(e);
+    // }
+    notifyListeners();
     return _items.firstWhere((book) => book.id == bookId);
   }
 
-  addBook(String name, String topic, double price, int countInStock) {
-    var newBook = Book(
-        id: _items.length.toString(),
-        name: name,
-        topic: topic,
-        price: price,
-        countInStock: countInStock);
-    _items.add(newBook);
+  Future<void> addBook(
+      String name, String topic, double price, int countInStock) async {
+    const url = 'http://localhost:5000/api/books/addBook';
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: json.encode({
+          'bookName': name,
+          'bookTopic': topic,
+          'bookCost': price,
+          'countInStock': countInStock,
+        }),
+      );
+      print(json.decode(response.body)['id']);
+
+      final newBook = Book(
+          id: json.decode(response.body)['id'],
+          name: name,
+          topic: topic,
+          price: price,
+          countInStock: countInStock);
+      _items.add(newBook);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 }
 /*
