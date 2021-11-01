@@ -15,7 +15,8 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   List<bool> hover = [false, false, false, false];
-
+  bool hover2 = false;
+  bool hover3 = false;
   String searchString = '';
 
   Future<void> _refreshBooks(BuildContext context) async {
@@ -74,12 +75,7 @@ class _HomeViewState extends State<HomeView> {
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/');
-                    },
-                    child: Text('Bazar '),
-                  ),
+                  const Text('Bazar '),
                 ],
               ),
               const SizedBox(width: 50),
@@ -89,6 +85,7 @@ class _HomeViewState extends State<HomeView> {
               const SizedBox(width: 16),
               //add Book Link
               link('Add Book', () {
+                print('object');
                 Navigator.of(context).pushNamed(AddBookView.routeName);
               }, 1),
               const SizedBox(width: 16),
@@ -107,12 +104,12 @@ class _HomeViewState extends State<HomeView> {
                           bottom: BorderSide(color: Colors.black, width: 2.0))),
                   child: TextFormField(
                     decoration: InputDecoration(labelText: 'Searc...'),
-                    // validator: (value) {
-                    //   if (value!.isEmpty || !value.contains('@')) {
-                    //     return '';
-                    //   }
-                    //   return null;
-                    // },
+                    validator: (value) {
+                      if (value!.isEmpty || !value.contains('@')) {
+                        return 'Invalid email!';
+                      }
+                      return null;
+                    },
                     onChanged: (value) {
                       setState(() {
                         searchString = value;

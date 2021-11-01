@@ -1,87 +1,112 @@
+import 'dart:convert';
+
 import 'package:bazar/models/book.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class Books extends ChangeNotifier {
-  final List<Book> _items = [
-    Book(
-        id: "0f8fad5b-d9cb-469f-a165-70867728950e",
-        name: "How to get a good grade in DOS in 40 minutes a day",
-        topic: "distributed systems",
-        price: 40,
-        countInStock: 15),
-    Book(
-        id: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        name: "RPCs for Noobs",
-        topic: "distributed systems",
-        price: 35,
-        countInStock: 12),
-    Book(
-        id: "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
-        name: "Xen and the Art of Surviving Undergraduate School",
-        topic: "undergraduate school",
-        price: 23,
-        countInStock: 14),
-    Book(
-        id: "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
-        name: "Cooking for the Impatient Undergrad",
-        topic: "undergraduate school",
-        price: 26,
-        countInStock: 23),
-    Book(
-        id: "0f8fad5b-d9cb-469f-a165-70867728950e",
-        name: "How to get a good grade in DOS in 40 minutes a day",
-        topic: "distributed systems",
-        price: 40,
-        countInStock: 15),
-    Book(
-        id: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        name: "RPCs for Noobs",
-        topic: "distributed systems",
-        price: 35,
-        countInStock: 12),
-    Book(
-        id: "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
-        name: "Xen and the Art of Surviving Undergraduate School",
-        topic: "undergraduate school",
-        price: 23,
-        countInStock: 14),
-    Book(
-        id: "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
-        name: "Cooking for the Impatient Undergrad",
-        topic: "undergraduate school",
-        price: 26,
-        countInStock: 23),
-    Book(
-        id: "0f8fad5b-d9cb-469f-a165-70867728950e",
-        name: "How to get a good grade in DOS in 40 minutes a day",
-        topic: "distributed systems",
-        price: 40,
-        countInStock: 15),
-    Book(
-        id: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-        name: "RPCs for Noobs",
-        topic: "distributed systems",
-        price: 35,
-        countInStock: 12),
-    Book(
-        id: "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
-        name: "Xen and the Art of Surviving Undergraduate School",
-        topic: "undergraduate school",
-        price: 23,
-        countInStock: 14),
-    Book(
-        id: "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
-        name: "Cooking for the Impatient Undergrad",
-        topic: "undergraduate school",
-        price: 26,
-        countInStock: 23),
-  ];
+  List<Book> _items = [];
+  //   Book(
+  //       id: "0f8fad5b-d9cb-469f-a165-70867728950e",
+  //       name: "How to get a good grade in DOS in 40 minutes a day",
+  //       topic: "distributed systems",
+  //       price: 40,
+  //       countInStock: 15),
+  //   Book(
+  //       id: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  //       name: "RPCs for Noobs",
+  //       topic: "distributed systems",
+  //       price: 35,
+  //       countInStock: 12),
+  //   Book(
+  //       id: "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
+  //       name: "Xen and the Art of Surviving Undergraduate School",
+  //       topic: "undergraduate school",
+  //       price: 23,
+  //       countInStock: 14),
+  //   Book(
+  //       id: "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
+  //       name: "Cooking for the Impatient Undergrad",
+  //       topic: "undergraduate school",
+  //       price: 26,
+  //       countInStock: 23),
+  //   Book(
+  //       id: "0f8fad5b-d9cb-469f-a165-70867728950e",
+  //       name: "How to get a good grade in DOS in 40 minutes a day",
+  //       topic: "distributed systems",
+  //       price: 40,
+  //       countInStock: 15),
+  //   Book(
+  //       id: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  //       name: "RPCs for Noobs",
+  //       topic: "distributed systems",
+  //       price: 35,
+  //       countInStock: 12),
+  //   Book(
+  //       id: "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
+  //       name: "Xen and the Art of Surviving Undergraduate School",
+  //       topic: "undergraduate school",
+  //       price: 23,
+  //       countInStock: 14),
+  //   Book(
+  //       id: "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
+  //       name: "Cooking for the Impatient Undergrad",
+  //       topic: "undergraduate school",
+  //       price: 26,
+  //       countInStock: 23),
+  //   Book(
+  //       id: "0f8fad5b-d9cb-469f-a165-70867728950e",
+  //       name: "How to get a good grade in DOS in 40 minutes a day",
+  //       topic: "distributed systems",
+  //       price: 40,
+  //       countInStock: 15),
+  //   Book(
+  //       id: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  //       name: "RPCs for Noobs",
+  //       topic: "distributed systems",
+  //       price: 35,
+  //       countInStock: 12),
+  //   Book(
+  //       id: "a2673dc7-35cb-4bf6-b398-bd1bd435c5f9",
+  //       name: "Xen and the Art of Surviving Undergraduate School",
+  //       topic: "undergraduate school",
+  //       price: 23,
+  //       countInStock: 14),
+  //   Book(
+  //       id: "ab372f43-49d1-4df1-8cf0-bfaa43f82d06",
+  //       name: "Cooking for the Impatient Undergrad",
+  //       topic: "undergraduate school",
+  //       price: 26,
+  //       countInStock: 23),
+  // ];
   get items {
     return _items;
   }
 
-  Future<List<Book>> fetchAndSetBooks() async {
-    return _items;
+  Future<void> fetchAndSetBooks() async {
+    String getAllBooks = 'http://localhost:5000/api/books/getAllBooks/';
+    try {
+      final response = await http.get(Uri.parse(getAllBooks));
+      final List<Book> loadedBooks = [];
+      // print(response.body);
+      final extractedDate = json.decode(response.body) as List<dynamic>;
+      if (extractedDate == null) return;
+
+      extractedDate.forEach((bookData) {
+        loadedBooks.add(
+          Book(
+              id: bookData['id'],
+              name: bookData['bookName'],
+              topic: bookData['bookTopic'],
+              price: bookData['bookCost'],
+              countInStock: bookData['countInStock']),
+        );
+      });
+      _items = loadedBooks;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 
   List<Book> searchBooks(String value) {

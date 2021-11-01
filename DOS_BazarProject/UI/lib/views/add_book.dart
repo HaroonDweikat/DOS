@@ -77,89 +77,9 @@ class _AddBookViewState extends State<AddBookView> {
     }
   }
 
-  //app bar
-  List<bool> hover = [false, false, false, false];
-
-  String searchString = '';
-
-  Future<void> _refreshBooks(BuildContext context) async {
-    await Provider.of<Books>(context, listen: false).fetchAndSetBooks();
-  }
-
-  Future<void> _bookSearch(BuildContext context, String value) async {
-    await Provider.of<Books>(context, listen: false).searchBooks(value);
-  }
-
-  Widget link(String title, Function() onClick, int index) {
-    return InkWell(
-      onTap: onClick,
-      hoverColor: Colors.transparent,
-      child: Row(
-        children: [
-          Icon(
-            Icons.refresh,
-            color: !hover[index] ? Colors.white : Colors.limeAccent,
-          ),
-          Text(
-            title,
-            style: TextStyle(
-                fontSize: 18,
-                color: !hover[index] ? Colors.white : Colors.limeAccent),
-          ),
-        ],
-      ),
-      onHover: (x) {
-        setState(() {
-          hover[index] = x;
-        });
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: SizedBox(
-          height: 50,
-          width: double.infinity,
-          child: Row(
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 50.0,
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'logo.png',
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/');
-                    },
-                    child: Text('Bazar '),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 50),
-              //refresh Books
-              link('Refresh Books', () => _refreshBooks(context), 0),
-
-              const SizedBox(width: 16),
-              //add Book Link
-              link('Add Book', () {
-                Navigator.of(context).pushNamed(AddBookView.routeName);
-              }, 1),
-              const SizedBox(width: 16),
-            ],
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Center(
         child: SizedBox(
           width: 500,
