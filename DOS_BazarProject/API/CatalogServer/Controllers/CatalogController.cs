@@ -1,9 +1,11 @@
 using System;
+using System.Web;
 using System.Collections.Generic;
 using AutoMapper;
 using CatalogServer.Data;
 using CatalogServer.DTO;
 using CatalogServer.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -94,12 +96,13 @@ namespace CatalogServer.Controllers
         }
 
         
-        //this method used to create a new book in the datebase 
+        //this method used to create a new book in the database 
         [HttpPost("addBook")]
-        public ActionResult<BookReadDto> AddBook(BookCreateDto book)
+        public ActionResult<BookReadDto> AddBook([FromBody] BookCreateDto book)
         {
             var mappedBook = _mapper.Map<Book>(book);
             _repo.AddBook(mappedBook);
+            _repo.SaveChanges();
             var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
             return Ok(mappedReadBook);
         }

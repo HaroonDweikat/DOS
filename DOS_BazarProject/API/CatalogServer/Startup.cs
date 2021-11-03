@@ -29,7 +29,10 @@ namespace CatalogServer
         public void ConfigureServices(IServiceCollection services)
         {
            
-            services.AddControllers();//this service used to add controller to the api
+            services.AddControllers().AddNewtonsoftJson(s =>
+            {
+                s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });//this service used to add controller to the api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CatalogServer", Version = "v1"});

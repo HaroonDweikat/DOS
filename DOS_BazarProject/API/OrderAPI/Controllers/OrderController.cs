@@ -37,7 +37,7 @@ namespace OrderAPI.Controllers
                 return NotFound();
             }
 
-            var mappedOrders = _mapper.Map<OrderReadDto>(orders);
+            var mappedOrders = _mapper.Map<IEnumerable<OrderReadDto>>(orders);
             return Ok(mappedOrders);
         }
 

@@ -10,7 +10,7 @@ namespace OrderAPI.Profile
         {
 
             CreateMap<OrderCreateDto,Order>();
-            CreateMap<Order, OrderReadDto>();
+            CreateMap<Order,OrderReadDto>();
 
         }
         
