@@ -5,22 +5,77 @@ import 'package:bazar/providers/orders.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OrderLest extends StatelessWidget {
-  const OrderLest({Key? key}) : super(key: key);
+class OrderList extends StatelessWidget {
+  List<Order> orders;
+  OrderList(
+    this.orders, {
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final _orders = Provider.of<Orders>(context).orders as List<Order>;
-    final _books = Provider.of<Books>(context).items as List<Book>;
-    return SizedBox(
-      child: ListView.builder(
-          itemCount: _orders.length,
-          itemBuilder: (ctx, i) {
-            var book = _books.firstWhere((book) => book.id == _orders[i].id);
-            return Center(
-              child: Text(book.name),
-            );
-          }),
+    var _books = Provider.of<Books>(context, listen: false).items as List<Book>;
+    return Center(
+      child: SizedBox(
+        width: 800,
+        child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: orders.length,
+            itemBuilder: (ctx, i) {
+              var book =
+                  _books.firstWhere((book) => book.id == orders[i].itemId);
+              return Center(
+                child: BookOrder(book, orders[i]),
+              );
+            }),
+      ),
     );
   }
+}
+
+Widget BookOrder(Book book, Order order) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ListTile(
+        leading: const Icon(Icons.book),
+        title: Row(
+          children: [
+            const Text('Book Name: ',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.blueAccent)),
+            Text(
+              book.name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            )
+          ],
+        ),
+        subtitle: Row(
+          children: [
+            const Text('Purches Date: ',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.blueAccent)),
+            Text(
+              order.date,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.green),
+            )
+          ],
+        ),
+        trailing: Text(1.toString() + 'x'),
+        dense: true,
+        isThreeLine: true,
+      ),
+      const SizedBox(
+        height: 20,
+      )
+    ],
+  );
 }

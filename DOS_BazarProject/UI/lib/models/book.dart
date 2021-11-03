@@ -5,7 +5,7 @@ class Book extends ChangeNotifier {
   final String name;
   final String topic;
   final double price;
-  final int countInStock;
+  int countInStock;
 
   Book(
       {required this.id,

@@ -1,26 +1,20 @@
 import 'package:bazar/models/book.dart';
 import 'package:bazar/providers/books.dart';
+import 'package:bazar/providers/orders.dart';
 import 'package:bazar/views/book_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BookItem extends StatelessWidget {
-  // void selectMeal(BuildContext context) {
-  //   Navigator.of(context)
-  //       .pushNamed(
-  //     BookDetailView.routeName,
-  //     arguments: id,
-  //   )
-  //       .then((resualt) {
-  //     if (resualt != null) {
-  //       // remveItem(resualt);
-  //     }
-  //   });
-  // }
+class BookItem extends StatefulWidget {
+  @override
+  State<BookItem> createState() => _BookItemState();
+}
 
+class _BookItemState extends State<BookItem> {
+  // void selectMeal(BuildContext context) {
   @override
   Widget build(BuildContext context) {
-    final book = Provider.of<Book>(context, listen: false);
+    var _book = Provider.of<Book>(context, listen: false);
     final size = MediaQuery.of(context).size;
     // print(book.name);
 
@@ -61,7 +55,7 @@ class BookItem extends StatelessWidget {
                       ),
                       width: 300,
                       child: Text(
-                        book.name,
+                        _book.name,
                         style: const TextStyle(
                           fontSize: 22,
                           color: Colors.white,
@@ -88,7 +82,7 @@ class BookItem extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            book.topic,
+                            _book.topic,
                             style: const TextStyle(
                               fontSize: 18,
                               color: Colors.white,
@@ -110,7 +104,7 @@ class BookItem extends StatelessWidget {
                         children: [
                           const Icon(Icons.monetization_on),
                           const SizedBox(width: 3),
-                          Text('${book.price} \$'),
+                          Text('${_book.price} \$'),
                         ],
                       ),
                       const SizedBox(width: 10),
@@ -118,9 +112,31 @@ class BookItem extends StatelessWidget {
                         children: [
                           const Icon(Icons.storage_rounded),
                           const SizedBox(width: 6),
-                          Text('${book.countInStock} In Stock'),
+                          Text('${_book.countInStock} In Stock'),
                         ],
                       ),
+                      const SizedBox(width: 10),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Provider.of<Orders>(context, listen: false)
+                              .addOrder(_book.id)
+                              .then((_) {
+                            setState(() {
+                              _book.countInStock -= 1;
+                            });
+                          });
+
+                          Provider.of<Books>(context, listen: false)
+                              .fetchAndSetBooks();
+                        },
+                        icon: Icon(Icons.add_shopping_cart_sharp),
+                        label: Text('Purchaes'),
+                        style: ElevatedButton.styleFrom(
+                            elevation: 6.0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16))),
+                      ),
+
                       // const SizedBox(width: 10),
                       // Row(
                       //   children: [

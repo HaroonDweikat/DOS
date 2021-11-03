@@ -88,8 +88,7 @@ class _HomeViewState extends State<HomeView> {
               }, 1),
               const SizedBox(width: 16),
               //Orders
-              link('Orders', Icons.shopping_cart_outlined, () async {
-                await Provider.of<Orders>(context).fetchAndSetOrders();
+              link('Orders', Icons.shopping_cart_outlined, () {
                 Navigator.of(context).pushNamed(OrdersViews.routeName);
               }, 2),
               const SizedBox(width: 16),

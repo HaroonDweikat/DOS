@@ -64,54 +64,13 @@ class _BookGridsState extends State<BookGrids> {
 
   @override
   Widget build(BuildContext context) {
-    // print('old =' + _oldSearch);
-    // print('new =' + widget.searchValue);
     if (_oldSearch != widget.searchValue) {
       getValue();
       setState(() {
         _oldSearch = widget.searchValue;
       });
     }
-    // return const Center(child: CircularProgressIndicator());
-    // return FutureBuilder(
-    //   future: getValue(),
-    //   builder: (ctx, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const Center(child: CircularProgressIndicator());
-    //     } else if (snapshot.connectionState == ConnectionState.done) {
-    //       if (snapshot.hasError) {
-    //         return const Text('Error');
-    //       } else if (snapshot.hasData) {
-    //         return books.isEmpty
-    //             ? const Center(
-    //                 child: Text(
-    //                   'Book dose not exists :(',
-    //                   style: TextStyle(color: Colors.grey, fontSize: 30),
-    //                 ),
-    //               )
-    //             : GridView.builder(
-    //                 padding: const EdgeInsets.all(10.0),
-    //                 itemCount: books.length,
-    //                 itemBuilder: (ctx, i) => ChangeNotifierProvider<Book>.value(
-    //                   value: books[i],
-    //                   child: BookItem(),
-    //                 ),
-    //                 gridDelegate:
-    //                     const SliverGridDelegateWithFixedCrossAxisCount(
-    //                   crossAxisCount: 4,
-    //                   childAspectRatio: 3 / 2,
-    //                   crossAxisSpacing: 10,
-    //                   mainAxisSpacing: 10,
-    //                 ),
-    //               );
-    //       } else {
-    //         return const Text('Empty data');
-    //       }
-    //     } else {
-    //       return Text('State: ${snapshot.connectionState}');
-    //     }
-    //   },
-    // );
+
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(),
