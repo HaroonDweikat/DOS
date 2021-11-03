@@ -1,6 +1,8 @@
 // import 'package:bazar/widgets/navigation_bar.dart';
 import 'package:bazar/providers/books.dart';
+import 'package:bazar/providers/orders.dart';
 import 'package:bazar/views/add_book.dart';
+import 'package:bazar/views/order_views.dart';
 import 'package:bazar/widgets/book_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -84,6 +86,12 @@ class _HomeViewState extends State<HomeView> {
               link('Add Book', Icons.add, () {
                 Navigator.of(context).pushNamed(AddBookView.routeName);
               }, 1),
+              const SizedBox(width: 16),
+              //Orders
+              link('Orders', Icons.shopping_cart_outlined, () async {
+                await Provider.of<Orders>(context).fetchAndSetOrders();
+                Navigator.of(context).pushNamed(OrdersViews.routeName);
+              }, 2),
               const SizedBox(width: 16),
               //Search box
               Row(children: [

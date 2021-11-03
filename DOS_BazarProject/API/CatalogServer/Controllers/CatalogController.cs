@@ -74,7 +74,7 @@ namespace CatalogServer.Controllers
 
         //this method used to update a value in the database for the book that have the passin id
         [HttpPatch("update/{id}")]
-        public ActionResult UpdateCost(Guid id ,JsonPatchDocument<BookUpdateDto> pathDoc)
+        public ActionResult UpdateCost(Guid id ,[FromBody]JsonPatchDocument<BookUpdateDto> pathDoc)
         {
             var bookFromDb = _repo.GetInfoById(id);//bring the data form the database
             if (bookFromDb == null)//check it value 

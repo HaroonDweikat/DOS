@@ -180,7 +180,7 @@ class Books extends ChangeNotifier {
       String name, String topic, double price, int countInStock) async {
     const url = 'http://localhost:5025/api/books/addBook/';
     try {
-      Map<String, dynamic> toJson = {
+      var toJson = {
         "bookName": name,
         "bookTopic": topic,
         "bookCost": price,
@@ -190,6 +190,7 @@ class Books extends ChangeNotifier {
       print(toJson);
       final response = await http.post(
         Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
         body: json.encode(toJson),
       );
       print(json.decode(response.body));
@@ -214,10 +215,7 @@ class Books extends ChangeNotifier {
       print(id);
       try {
         final url = 'http://localhost:5025/api/books/update/$id';
-        // 'name': loadedBook.name,
-        // 'topic': loadedBook.topic,
-        // 'price': loadedBook.price,
-        // 'countInStock': loadedBook.countInStock,
+
         final jsonObj = [];
         print(newBook);
         newBook.forEach((key, value) {
@@ -226,41 +224,39 @@ class Books extends ChangeNotifier {
               _items[prodIndex].price == value ||
               _items[prodIndex].countInStock == value) {
           } else {
-            var newValue = {
-              'opt': 'replace',
-              'path': '\\\\$key',
-              'value': value,
-            };
+            var newValue = {"op": "replace", "path": "/$key", "value": value};
             jsonObj.add(newValue);
           }
         });
         print(jsonObj);
-        final response = await http.patch(Uri.parse(url),
-            body: json.encode({
-              jsonObj
-              // {
-              //   'opt': 'replace',
-              //   'path': '\\bookName',
-              //   'value': newBook['bookName'],
-              // },
-              // {
-              //   'opt': 'replace',
-              //   'path': '\\bookTopic',
-              //   'value': newBook['bookTopic'],
-              // },
-              // {
-              //   'opt': 'replace',
-              //   'path': '\\bookCost',
-              //   'value': newBook['bookCost'],
-              // },
-              // {
-              //   'opt': 'replace',
-              //   'path': '\\countInStock',
-              //   'value': newBook['countInStock'],
-              // },
-            }));
-        print(response.body);
+        await http.patch(
+          Uri.parse(url),
+          headers: {'Content-Type': 'application/json-patch+json'},
+          body: json.encode(jsonObj),
+
+          // [{
+          //   'opt': 'replace',
+          //   'path': '\\bookName',
+          //   'value': newBook['bookName'],
+          // },
+          // {
+          //   'opt': 'replace',
+          //   'path': '\\bookTopic',
+          //   'value': newBook['bookTopic'],
+          // },
+          // {
+          //   'opt': 'replace',
+          //   'path': '\\bookCost',
+          //   'value': newBook['bookCost'],
+          // },
+          // {
+          //   'opt': 'replace',
+          //   'path': '\\countInStock',
+          //   'value': newBook['countInStock'],
+          // }],
+        );
       } catch (e) {
+        print(e);
       } finally {
         notifyListeners();
       }

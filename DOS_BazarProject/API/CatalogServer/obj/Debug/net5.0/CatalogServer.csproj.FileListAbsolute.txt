@@ -174,3 +174,8 @@ G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\ref\CatalogServer.dll
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.pdb
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.genruntimeconfig.cache
+G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\bin\Debug\net5.0\System.Web.Cors.dll
+G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\bin\Debug\net5.0\System.Net.Http.Formatting.dll
+G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\bin\Debug\net5.0\System.Web.Http.dll
+G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\bin\Debug\net5.0\System.Web.Http.Cors.dll
+G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.csproj.CopyComplete
