@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Web.Http.Cors;
 using AutoMapper;
 using CatalogServer.Data;
 using CatalogServer.DTO;

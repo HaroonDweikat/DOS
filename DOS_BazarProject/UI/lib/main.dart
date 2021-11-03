@@ -1,4 +1,5 @@
 import 'package:bazar/providers/books.dart';
+import 'package:bazar/providers/orders.dart';
 import 'package:bazar/views/add_book.dart';
 import 'package:bazar/views/book_detail_view.dart';
 import 'package:bazar/views/home_view.dart';
@@ -20,20 +21,26 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Books(),
         ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Bazar',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        ChangeNotifierProvider(
+          create: (ctx) => Orders(),
         ),
-        home: HomeView(),
-        routes: {
-          HomeView.routeName: (ctx) => HomeView(),
-          BookDetailView.routeName: (ctx) => BookDetailView(),
-          AddBookView.routeName: (ctx) => AddBookView(),
-        },
-      ),
+      ],
+      child: Consumer<Books>(builder: (ctx, books, _) {
+        books.fetchAndSetBooks();
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Bazar',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: HomeView(),
+          routes: {
+            HomeView.routeName: (ctx) => HomeView(),
+            BookDetailView.routeName: (ctx) => const BookDetailView(),
+            AddBookView.routeName: (ctx) => AddBookView(),
+          },
+        );
+      }),
     );
   }
 }

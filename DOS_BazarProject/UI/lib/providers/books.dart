@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 class Books extends ChangeNotifier {
   List<Book> _items = [];
+  Book _bookItem =
+      Book(id: "", name: "", topic: "", price: 0.0, countInStock: 0);
   //   Book(
   //       id: "0f8fad5b-d9cb-469f-a165-70867728950e",
   //       name: "How to get a good grade in DOS in 40 minutes a day",
@@ -83,8 +85,12 @@ class Books extends ChangeNotifier {
     return _items;
   }
 
+  get bookItem {
+    return _bookItem;
+  }
+
   Future<void> fetchAndSetBooks() async {
-    String getAllBooks = 'http://localhost:5000/api/books/getAllBooks/';
+    String getAllBooks = 'http://localhost:5025/api/books/getAllBooks/';
     try {
       final response = await http.get(Uri.parse(getAllBooks));
       final List<Book> loadedBooks = [];
@@ -109,69 +115,157 @@ class Books extends ChangeNotifier {
     }
   }
 
-  List<Book> searchBooks(String value) {
+  Future<List<Book>> searchBooks(String value) async {
+    String getBookByTopic =
+        'http://localhost:5025/api/books/searchByTopic/' + value;
     if (value == '') {
+      if (_items.isEmpty) {
+        await fetchAndSetBooks();
+      }
       return _items.toList();
     }
-    List<Book> searchedBooks = _items
-        .where((book) => book.name.toLowerCase().contains(value.toLowerCase()))
-        .toList();
-    return searchedBooks != null ? searchedBooks.toList() : _items.toList();
+    final List<Book> loadedBooks = [];
+    try {
+      final response = await http.get(Uri.parse(getBookByTopic));
+
+      final extractedDate = json.decode(response.body) as List<dynamic>;
+      if (extractedDate == null) return loadedBooks;
+      extractedDate.forEach((bookData) {
+        loadedBooks.add(
+          Book(
+              id: bookData['id'],
+              name: bookData['bookName'],
+              topic: bookData['bookTopic'],
+              price: bookData['bookCost'],
+              countInStock: bookData['countInStock']),
+        );
+      });
+      // _items = loadedBooks;
+      notifyListeners();
+    } catch (e) {}
+    // List<Book> searchedBooks = _items
+    //     .where((book) => book.name.toLowerCase().contains(value.toLowerCase()))
+    //     .toList();
+    // return searchedBooks != null ? searchedBooks.toList() : _items.toList();
+    return loadedBooks.toList();
   }
 
-  Book findById(String bookId) {
-    // String getBookById =
-    //     'http://localhost:5000/api/books/getInfoById/' + bookId;
-    // try {
-    //   final response = await http.get(Uri.parse(getBookById));
-    //   final List<Book> loadedBooks = [];
-    //   final extractedDate = json.decode(response.body) as Map<String, dynamic>;
-    //   if (extractedDate == null) return;
+  Future<Book> findById(String bookId) async {
+    String getBookById =
+        'http://localhost:5025/api/books/getInfoById/' + bookId;
+    var findedBook;
+    try {
+      final response = await http.get(Uri.parse(getBookById));
+      final extractedDate = json.decode(response.body) as Map<String, dynamic>;
+      // if (extractedDate == null) return;
 
-    //   print(extractedDate['id']);
-    //   var findedBook = Book(
-    //     id: extractedDate['id'],
-    //     name: extractedDate['bookName'],
-    //     topic: extractedDate['bookTopic'],
-    //     price: extractedDate['bookCost'],
-    //     countInStock: extractedDate['countInStock'],
-    //   );
-    //   print(findedBook.id);
-    //   return findedBook;
-    // } catch (e) {
-    //   print(e);
-    // }
-    notifyListeners();
-    return _items.firstWhere((book) => book.id == bookId);
+      // print(extractedDate['id']);
+      findedBook = Book(
+        id: extractedDate['id'],
+        name: extractedDate['bookName'],
+        topic: extractedDate['bookTopic'],
+        price: extractedDate['bookCost'],
+        countInStock: extractedDate['countInStock'],
+      );
+    } catch (e) {
+      print(e);
+    } finally {
+      notifyListeners();
+      return findedBook;
+    }
+    // return _items.firstWhere((book) => book.id == bookId);
   }
 
   Future<void> addBook(
       String name, String topic, double price, int countInStock) async {
-    const url = 'http://localhost:5000/api/books/addBook';
+    const url = 'http://localhost:5025/api/books/addBook/';
     try {
+      Map<String, dynamic> toJson = {
+        "bookName": name,
+        "bookTopic": topic,
+        "bookCost": price,
+        "countInStock": countInStock,
+      };
+
+      print(toJson);
       final response = await http.post(
         Uri.parse(url),
-        body: json.encode({
-          'bookName': name,
-          'bookTopic': topic,
-          'bookCost': price,
-          'countInStock': countInStock,
-        }),
+        body: json.encode(toJson),
       );
-      print(json.decode(response.body)['id']);
+      print(json.decode(response.body));
 
-      final newBook = Book(
-          id: json.decode(response.body)['id'],
-          name: name,
-          topic: topic,
-          price: price,
-          countInStock: countInStock);
-      _items.add(newBook);
+      // final newBook = Book(
+      //     id: json.decode(response.body)['id'],
+      //     name: name,
+      //     topic: topic,
+      //     price: price,
+      //     countInStock: countInStock);
+      // _items.add(newBook);
       notifyListeners();
     } catch (error) {
       print(error);
-      throw error;
+      // throw error;
     }
+  }
+
+  Future<void> updateBook(String id, Map<String, dynamic> newBook) async {
+    final prodIndex = _items.indexWhere((book) => book.id == id);
+    if (prodIndex >= 0) {
+      print(id);
+      try {
+        final url = 'http://localhost:5025/api/books/update/$id';
+        // 'name': loadedBook.name,
+        // 'topic': loadedBook.topic,
+        // 'price': loadedBook.price,
+        // 'countInStock': loadedBook.countInStock,
+        final jsonObj = [];
+        print(newBook);
+        newBook.forEach((key, value) {
+          if (_items[prodIndex].name == value ||
+              _items[prodIndex].topic == value ||
+              _items[prodIndex].price == value ||
+              _items[prodIndex].countInStock == value) {
+          } else {
+            var newValue = {
+              'opt': 'replace',
+              'path': '\\\\$key',
+              'value': value,
+            };
+            jsonObj.add(newValue);
+          }
+        });
+        print(jsonObj);
+        final response = await http.patch(Uri.parse(url),
+            body: json.encode({
+              jsonObj
+              // {
+              //   'opt': 'replace',
+              //   'path': '\\bookName',
+              //   'value': newBook['bookName'],
+              // },
+              // {
+              //   'opt': 'replace',
+              //   'path': '\\bookTopic',
+              //   'value': newBook['bookTopic'],
+              // },
+              // {
+              //   'opt': 'replace',
+              //   'path': '\\bookCost',
+              //   'value': newBook['bookCost'],
+              // },
+              // {
+              //   'opt': 'replace',
+              //   'path': '\\countInStock',
+              //   'value': newBook['countInStock'],
+              // },
+            }));
+        print(response.body);
+      } catch (e) {
+      } finally {
+        notifyListeners();
+      }
+    } else
+      print('... prodIndex not valid');
   }
 }
 /*

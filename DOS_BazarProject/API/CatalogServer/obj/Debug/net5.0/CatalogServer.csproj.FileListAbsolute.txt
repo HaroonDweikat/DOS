@@ -170,7 +170,6 @@ G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\staticwebassets\CatalogServer.StaticWebAssets.xml
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\scopedcss\bundle\CatalogServer.styles.css
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.RazorTargetAssemblyInfo.cache
-G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.csproj.CopyComplete
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.dll
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\ref\CatalogServer.dll
 G:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\obj\Debug\net5.0\CatalogServer.pdb

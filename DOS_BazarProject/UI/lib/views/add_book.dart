@@ -23,6 +23,11 @@ class _AddBookViewState extends State<AddBookView> {
     'countInStock': 0,
   };
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,

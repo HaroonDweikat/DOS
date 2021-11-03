@@ -23,18 +23,14 @@ class _HomeViewState extends State<HomeView> {
     await Provider.of<Books>(context, listen: false).fetchAndSetBooks();
   }
 
-  Future<void> _bookSearch(BuildContext context, String value) async {
-    await Provider.of<Books>(context, listen: false).searchBooks(value);
-  }
-
-  Widget link(String title, Function() onClick, int index) {
+  Widget link(String title, IconData icon, Function() onClick, int index) {
     return InkWell(
       onTap: onClick,
       hoverColor: Colors.transparent,
       child: Row(
         children: [
           Icon(
-            Icons.refresh,
+            icon,
             color: !hover[index] ? Colors.white : Colors.limeAccent,
           ),
           Text(
@@ -80,12 +76,12 @@ class _HomeViewState extends State<HomeView> {
               ),
               const SizedBox(width: 50),
               //refresh Books
-              link('Refresh Books', () => _refreshBooks(context), 0),
+              link('Refresh Books', Icons.refresh_sharp,
+                  () => _refreshBooks(context), 0),
 
               const SizedBox(width: 16),
               //add Book Link
-              link('Add Book', () {
-                print('object');
+              link('Add Book', Icons.add, () {
                 Navigator.of(context).pushNamed(AddBookView.routeName);
               }, 1),
               const SizedBox(width: 16),
@@ -103,10 +99,10 @@ class _HomeViewState extends State<HomeView> {
                       border: Border(
                           bottom: BorderSide(color: Colors.black, width: 2.0))),
                   child: TextFormField(
-                    decoration: InputDecoration(labelText: 'Searc...'),
+                    decoration: const InputDecoration(labelText: 'Search...'),
                     validator: (value) {
-                      if (value!.isEmpty || !value.contains('@')) {
-                        return 'Invalid email!';
+                      if (value!.isEmpty) {
+                        return 'Invalid !';
                       }
                       return null;
                     },
@@ -114,7 +110,7 @@ class _HomeViewState extends State<HomeView> {
                       setState(() {
                         searchString = value;
                       });
-                      print(value);
+                      // print(value);
                     },
                   ),
                 ),
@@ -124,14 +120,7 @@ class _HomeViewState extends State<HomeView> {
         ),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: books.fetchAndSetBooks(),
-        builder: (ctx, snapshot) => RefreshIndicator(
-            onRefresh: () => _refreshBooks(context),
-            child: BookGrids(
-              value: searchString,
-            )),
-      ),
+      body: BookGrids(searchValue: searchString),
     );
   }
 }
