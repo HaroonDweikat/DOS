@@ -104,6 +104,7 @@ namespace CatalogServer.Controllers
             _repo.AddBook(mappedBook);
             _repo.SaveChanges();
             var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
+            _repo.SaveChanges();
             return Ok(mappedReadBook);
         }
 
