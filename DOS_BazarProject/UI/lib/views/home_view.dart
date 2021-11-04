@@ -79,7 +79,7 @@ class _HomeViewState extends State<HomeView> {
               const SizedBox(width: 50),
               //refresh Books
               link('Refresh Books', Icons.refresh_sharp,
-                  () => _refreshBooks(context), 0),
+                  () => Provider.of<Books>(context, listen: false).fetchAndSetBooks(), 0),
 
               const SizedBox(width: 16),
               //add Book Link
