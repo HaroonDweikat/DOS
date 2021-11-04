@@ -20,7 +20,7 @@ namespace CatalogServer.Data
 
         public IEnumerable<Book> SearchByTopic(string topic)
         {
-            var dataFromDb = _context.Catalogs.Where(row => row.BookTopic.ToLower().Contains(topic.ToLower())).ToList();
+            var dataFromDb = _context.Catalogs.Where(row => row.BookTopic.Contains(topic)).ToList();
             return dataFromDb;
         }
 
@@ -38,21 +38,23 @@ namespace CatalogServer.Data
         {
             if (book == null)
             {
+                Console.WriteLine("(CatalogServer)--->The book is null");
                 throw new ArgumentNullException();
             }
-
+            Console.WriteLine("(CatalogServer)--->The book has been added successfully");
             _context.Catalogs.Add(book);
         }
 
 
         public bool SaveChanges()
         {
+            Console.WriteLine("(CatalogServer)--->Data has been saved successfully");
             return (_context.SaveChanges() >= 0);
         }
 
         public void Update(Book book)
         {
-            
+            Console.WriteLine("(CatalogServer)--->Data has been update successfully");
         }
 
         public int DecreaseBookCount(Guid id)
@@ -62,26 +64,33 @@ namespace CatalogServer.Data
 
             if(bookToCheckValue == null)
             {
+                Console.WriteLine("(CatalogServer)--->the book is null ");
                 return 0;
             }
             else if (bookToCheckValue.CountInStock > 0)
             {
                 var row = _context.Database.ExecuteSqlInterpolated(
                     $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} ");
+                Console.WriteLine("(CatalogServer)--->update has been done successfully");
                 return 1;
-            }else
+            }
+            else
+            {
+                Console.WriteLine("(CatalogServer)--->The book is out of stock");
                 return 2;
+            }
+                
         }
 
-        public void IncreaseBookCount(Guid id)
-        {
-            
-
-             
-            var row= _context.Database.ExecuteSqlInterpolated(
-                $"UPDATE Catalogs SET CountInStock= CountInStock + 1 WHERE Id={id} ");
-
-               
-        }
+        // public void IncreaseBookCount(Guid id)
+        // {
+        //     
+        //
+        //      
+        //     var row= _context.Database.ExecuteSqlInterpolated(
+        //         $"UPDATE Catalogs SET CountInStock= CountInStock + 1 WHERE Id={id} ");
+        //
+        //        
+        // }
     }
 }

@@ -7,4 +7,4 @@ build_property.PublishSingleFile =
 build_property.IncludeAllContentForSelfExtract = 
 build_property._SupportedPlatformList = Android,iOS,Linux,macOS,Windows
 build_property.RootNamespace = CatalogServer
-build_property.ProjectDir = g:\Devlopement\Projects\Dos\DOS\DOS_BazarProject\API\CatalogServer\
+build_property.ProjectDir = /mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/CatalogServer/CatalogServer/

@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Cors;
 using CatalogServer.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -80,6 +78,5 @@ namespace CatalogServer
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });// Map the controller for their endpoints
         }
-        
     }
 }

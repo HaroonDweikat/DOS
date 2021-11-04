@@ -1,12 +1,9 @@
 using System;
-using System.Web;
 using System.Collections.Generic;
-using System.Web.Http.Cors;
 using AutoMapper;
 using CatalogServer.Data;
 using CatalogServer.DTO;
 using CatalogServer.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,10 +32,11 @@ namespace CatalogServer.Controllers
             var books=_repo.GetAllBooks();// bring the data from the database
             if (books == null)// check if the data value is null that mean that there is no data 
             {
+                Console.WriteLine("(CatalogServer)--->There is no books to display in the CatalogServer DB");
                 return NotFound();
             }
-            
-            var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);//mape from Book to BookReadDto
+            Console.WriteLine("(CatalogServer)--->The books have been sent");
+            var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);//map from Book to BookReadDto
             return Ok(mappedBook);
         }
 
@@ -50,9 +48,10 @@ namespace CatalogServer.Controllers
             var book = _repo.GetInfoById(id);
             if (book == null)
             {
+                Console.WriteLine("(CatalogServer)--->There is no book with this ID :"+id);
                 return NotFound();
             }
-
+            Console.WriteLine("(CatalogServer)--->The book has been sent");
             var mappedBook= _mapper.Map<BookReadDto>(book);
             return Ok(mappedBook);
         }
@@ -65,8 +64,10 @@ namespace CatalogServer.Controllers
             var books = _repo.SearchByTopic(topic);
             if (books == null)
             {
+                Console.WriteLine("(CatalogServer)--->There is no books with this topic :"+topic);
                 return NotFound();
             }
+            Console.WriteLine("(CatalogServer)--->The books have been sent");
             var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);
             return Ok(mappedBook);
         }
@@ -79,6 +80,7 @@ namespace CatalogServer.Controllers
             var bookFromDb = _repo.GetInfoById(id);//bring the data form the database
             if (bookFromDb == null)//check it value 
             {
+                Console.WriteLine("(CatalogServer)--->There is no book with this Id :"+id);
                 return NotFound();
             }
             var commandToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
@@ -88,6 +90,7 @@ namespace CatalogServer.Controllers
             //json request obj
             if (!TryValidateModel(commandToPatch))//to check if the update have been done correctly
             {
+                Console.WriteLine("(CatalogServer)--->Something goes wrong in updating process");
                 return ValidationProblem(ModelState);
             }
             _mapper.Map(commandToPatch,bookFromDb);
@@ -105,7 +108,6 @@ namespace CatalogServer.Controllers
             _repo.AddBook(mappedBook);
             _repo.SaveChanges();
             var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
-            _repo.SaveChanges();
             return Ok(mappedReadBook);
         }
 
@@ -133,17 +135,17 @@ namespace CatalogServer.Controllers
         
         
         
-        [HttpPost("Increase/{id}")]
-        public ActionResult IncreaseBookCount(Guid id)
-        {
-            if (_repo.GetInfoById(id) == null)
-            {
-                return NotFound();
-            }
-            _repo.IncreaseBookCount(id);
-
-            return Ok();
-        }
+        // [HttpPost("Increase/{id}")]
+        // public ActionResult IncreaseBookCount(Guid id)
+        // {
+        //     if (_repo.GetInfoById(id) == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     _repo.IncreaseBookCount(id);
+        //
+        //     return Ok();
+        //}
 
         
 

@@ -6176,19 +6176,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Haroon\\.nuget\\packages\\": {}
+    "/home/mahdesouqi/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "G:\\Devlopement\\Projects\\Dos\\DOS\\DOS_BazarProject\\API\\OrderAPI\\OrderAPI.csproj",
+      "projectUniqueName": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/OrderAPI/OrderAPI/OrderAPI.csproj",
       "projectName": "OrderAPI",
-      "projectPath": "G:\\Devlopement\\Projects\\Dos\\DOS\\DOS_BazarProject\\API\\OrderAPI\\OrderAPI.csproj",
-      "packagesPath": "C:\\Users\\Haroon\\.nuget\\packages\\",
-      "outputPath": "G:\\Devlopement\\Projects\\Dos\\DOS\\DOS_BazarProject\\API\\OrderAPI\\obj\\",
+      "projectPath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/OrderAPI/OrderAPI/OrderAPI.csproj",
+      "packagesPath": "/home/mahdesouqi/.nuget/packages/",
+      "outputPath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/OrderAPI/OrderAPI/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Haroon\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/mahdesouqi/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
@@ -6279,7 +6279,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.402/RuntimeIdentifierGraph.json"
       }
     }
   }
