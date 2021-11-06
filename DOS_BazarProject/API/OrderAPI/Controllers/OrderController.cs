@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.Data;
@@ -55,6 +54,31 @@ namespace OrderAPI.Controllers
             var mappedOrder = _mapper.Map<OrderReadDto>(order);
             return Ok(mappedOrder);
         }
+
+
+        public HttpStatusCode SendCheckRequest(Guid id)
+        {
+            var client = _clientFactory.CreateClient();//create a mock client to send the "check request"
+            var request = new HttpRequestMessage(HttpMethod.Get,"http://catalog_server/api/books/checkStock/"+id );
+            Console.WriteLine("(OrderServer)--->Send Query request to CatalogServer");
+            var response = client.Send(request);
+
+            return response.StatusCode;
+        }
+        
+        
+        
+        public void SendDecreaseRequest(Guid id)
+        {
+            var client = _clientFactory.CreateClient();//create a mock client to send the "check request"
+            var request = new HttpRequestMessage(HttpMethod.Post,"http://catalog_server/api/books/decrease/"+id );
+            Console.WriteLine("(OrderServer)--->Send Update request to CatalogServer");
+            client.Send(request);
+
+            
+        }
+        
+        
         //this method receive the new order request what it responsibility : first to check if there is a stock of the required book 
         // if yes update the stock decrease the book stock (all that done in a server to server request)
         // if no send back a Problem message to the client
@@ -63,32 +87,33 @@ namespace OrderAPI.Controllers
         {
             var mappedCreateOrder = _mapper.Map<Order>(order);
             Guid itemId = mappedCreateOrder.ItemId;
-            var client = _clientFactory.CreateClient();//create a mock client to send the "check request"
-            var request = new HttpRequestMessage(HttpMethod.Post,"http://catalog_server/api/books/decrease/"+itemId );
-            Console.WriteLine("(OrderServer)--->Send Query&Update request to CatalogServer");
-            var response=  client.Send(request);
+            
+            var response=  SendCheckRequest(itemId);
             
                 //check the response StatusCode to determine the response of the client request
-           if (response.StatusCode == HttpStatusCode.OK)//everything is ok and the order have been stored
+           if (response == HttpStatusCode.OK)//everything is ok and the order have been stored
            {
-               Console.WriteLine("(OrderServer)--->StockCount >0 Purchase Done successfully");
+               
+               Console.WriteLine("(OrderServer)--->StockCount > 0  ");
+               SendDecreaseRequest(itemId);
+               Console.WriteLine("(OrderServer)--->Purchase done successfully");
                _repo.Purchase(mappedCreateOrder);
                _repo.SaveChanges();
                var mappedRead = _mapper.Map<OrderReadDto>(mappedCreateOrder);
                return Ok(mappedRead);
            }
-           else if (response.StatusCode == HttpStatusCode.NotFound)// the required book is not exist in our database
+           else if (response == HttpStatusCode.NotFound)// the required book is not exist in our database
            {
                Console.WriteLine("(OrderServer)--->There is no book with this Id :"+order.ItemId+" request failed");
                return NotFound();
            }
-           else if (response.StatusCode == HttpStatusCode.NoContent)// the book is out of stock
+           else if (response == HttpStatusCode.NoContent)// the book is out of stock
            {
                Console.WriteLine("(OrderServer)--->Book out of stock");
                return Problem("Book out of stock");
            }
 
-           return Problem("There is Something wrong !! MahdeSouqi");
+           return Problem("There is Something wrong !! ");
 
         }
 

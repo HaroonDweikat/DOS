@@ -112,17 +112,17 @@ namespace CatalogServer.Controllers
         }
 
         //this method usage is to decrease the book stock count in the database when a Purchase operation occur
-        [HttpPost("decrease/{id}")]
-        public ActionResult DecreaseBookCount(Guid id)
+        [HttpGet("checkStock/{id}")]
+        public ActionResult CheckBookCount(Guid id)
         {
             
-            int result= _repo.DecreaseBookCount(id);
+            int result= _repo.CheckStock(id);
             
 
             if(result == 0 )//to check if the book exist or no
             {
                 return NotFound();
-            }else if(result == 1 )//the book exist and we decrease the stock count
+            }else if(result == 1 )//the book exist 
             {
                 return Ok();
             }else // the book is out of stock
@@ -131,6 +131,15 @@ namespace CatalogServer.Controllers
             }
             
             
+        }
+        
+         [HttpPost("decrease/{id}")]
+         public ActionResult DecreaseBookCount(Guid id)
+         {
+             
+             _repo.DecreaseBookCount(id);
+        
+             return Ok();
         }
         
         

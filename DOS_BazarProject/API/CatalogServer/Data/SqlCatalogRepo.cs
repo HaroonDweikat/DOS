@@ -57,40 +57,36 @@ namespace CatalogServer.Data
             Console.WriteLine("(CatalogServer)--->Data has been update successfully");
         }
 
-        public int DecreaseBookCount(Guid id)
+        public int CheckStock(Guid id)
         {
         
             var bookToCheckValue =GetInfoById(id);
 
-            if(bookToCheckValue == null)
+            if(bookToCheckValue == null)// there is no book in this id 
             {
-                Console.WriteLine("(CatalogServer)--->the book is null ");
+                
                 return 0;
             }
-            else if (bookToCheckValue.CountInStock > 0)
+            else if (bookToCheckValue.CountInStock > 0)// there is a book with this id
             {
-                var row = _context.Database.ExecuteSqlInterpolated(
-                    $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} ");
-                Console.WriteLine("(CatalogServer)--->update has been done successfully");
+               
                 return 1;
             }
-            else
+            else//// book is out of stock
             {
-                Console.WriteLine("(CatalogServer)--->The book is out of stock");
+               
                 return 2;
             }
                 
         }
 
-        // public void IncreaseBookCount(Guid id)
-        // {
-        //     
-        //
-        //      
-        //     var row= _context.Database.ExecuteSqlInterpolated(
-        //         $"UPDATE Catalogs SET CountInStock= CountInStock + 1 WHERE Id={id} ");
-        //
-        //        
-        // }
+        public void DecreaseBookCount(Guid id)
+        {
+            
+            _context.Database.ExecuteSqlInterpolated(
+                $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} ");
+            Console.WriteLine("(CatalogServer)--->update has been done successfully");
+            
+        }
     }
 }

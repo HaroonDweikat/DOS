@@ -19,7 +19,9 @@ namespace CatalogServer.Data
 
         public void Update(Book book);
 
-        public int DecreaseBookCount(Guid id);
+        public int CheckStock(Guid id);
+
+        public void DecreaseBookCount(Guid id);
 
        // public void IncreaseBookCount(Guid id);
     }

@@ -5,8 +5,7 @@ namespace OrderAPI.DTO
 {
     public class OrderCreateDto
     {
-        [Key] 
-        public Guid Id { get; set; }
+        
         [Required] 
         public Guid ItemId { get; set; }
         [Required] 
