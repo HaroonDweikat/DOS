@@ -20,7 +20,8 @@ namespace CatalogServer.Data
 
         public IEnumerable<Book> SearchByTopic(string topic)
         {
-            var dataFromDb = _context.Catalogs.Where(row => row.BookTopic.ToLower().Contains(topic.ToLower())).ToList();
+            var dataFromDb = _context.Catalogs.Where(row => row.BookTopic.ToLower().
+                Contains(topic.ToLower())).ToList();
             return dataFromDb;
         }
 
@@ -34,15 +35,25 @@ namespace CatalogServer.Data
             return _context.Catalogs.FirstOrDefault(p => p.Id == id);
         }
 
-        public void AddBook(Book book)
+        public bool AddBook(Book book)
         {
             if (book == null)
             {
                 Console.WriteLine("(CatalogServer)--->The book is null");
                 throw new ArgumentNullException();
             }
+
+            var bookFromDb = _context.Catalogs.FirstOrDefault(b => b.BookName.ToLower().Equals(book.BookName.ToLower()));
+
+            if (bookFromDb != null)
+            {
+                Console.WriteLine("(CatalogServer)--->The book already added");
+                return false;
+            }
+            
             Console.WriteLine("(CatalogServer)--->The book has been added successfully");
             _context.Catalogs.Add(book);
+            return true;
         }
 
 

@@ -13,7 +13,7 @@ namespace CatalogServer.Data
         
         public Book GetInfoById(Guid id);
 
-        public void AddBook(Book book);
+        public bool AddBook(Book book);
         
         public bool SaveChanges();
 

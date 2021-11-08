@@ -105,7 +105,11 @@ namespace CatalogServer.Controllers
         public ActionResult<BookReadDto> AddBook([FromBody] BookCreateDto book)
         {
             var mappedBook = _mapper.Map<Book>(book);
-            _repo.AddBook(mappedBook);
+            var checkExistence=_repo.AddBook(mappedBook);
+            if (!checkExistence)// to check if the book already exist
+            {
+                return Problem("Book already exist");
+            }
             _repo.SaveChanges();
             var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
             return Ok(mappedReadBook);
