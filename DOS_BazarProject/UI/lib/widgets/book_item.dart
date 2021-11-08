@@ -41,7 +41,7 @@ class _BookItemState extends State<BookItem> {
                     child: Image.asset(
                       'assets/book-cover.jpg',
                       fit: BoxFit.cover,
-                      height: size.height / 4.5,
+                      height: size.height / 5,
                       width: double.infinity,
                     ),
                   ),
@@ -122,7 +122,8 @@ class _BookItemState extends State<BookItem> {
                               .addOrder(_book.id)
                               .then((_) {
                             setState(() {
-                              _book.countInStock -= 1;
+                              _book.countInStock -=
+                                  _book.countInStock > 0 ? 1 : 0;
                             });
                           });
 
@@ -130,7 +131,7 @@ class _BookItemState extends State<BookItem> {
                               .fetchAndSetBooks();
                         },
                         icon: Icon(Icons.add_shopping_cart_sharp),
-                        label: Text('Purchaes'),
+                        label: Text('Buy'),
                         style: ElevatedButton.styleFrom(
                             elevation: 6.0,
                             shape: RoundedRectangleBorder(

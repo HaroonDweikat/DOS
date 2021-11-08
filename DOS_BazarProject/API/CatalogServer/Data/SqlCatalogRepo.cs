@@ -20,7 +20,7 @@ namespace CatalogServer.Data
 
         public IEnumerable<Book> SearchByTopic(string topic)
         {
-            var dataFromDb = _context.Catalogs.Where(row => row.BookTopic.Contains(topic)).ToList();
+            var dataFromDb = _context.Catalogs.Where(row => row.BookTopic.ToLower().Contains(topic.ToLower())).ToList();
             return dataFromDb;
         }
 

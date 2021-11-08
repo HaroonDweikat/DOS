@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: Consumer<Books>(builder: (ctx, books, _) {
-        books.fetchAndSetBooks();
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Bazar',

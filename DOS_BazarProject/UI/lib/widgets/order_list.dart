@@ -53,20 +53,40 @@ Widget BookOrder(Book book, Order order) {
             )
           ],
         ),
-        subtitle: Row(
+        subtitle: Column(
           children: [
-            const Text('Purches Date: ',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.blueAccent)),
-            Text(
-              order.date,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.green),
-            )
+            Row(
+              children: [
+                const Text('Purches Date: ',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.blueAccent)),
+                Text(
+                  order.date,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.green),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                const Text('Order Id: ',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.blueAccent)),
+                Text(
+                  order.id,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.green),
+                )
+              ],
+            ),
           ],
         ),
         trailing: Text(1.toString() + 'x'),

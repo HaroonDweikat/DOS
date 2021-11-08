@@ -17,9 +17,26 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   List<bool> hover = [false, false, false, false];
-  bool hover2 = false;
-  bool hover3 = false;
+  bool _isInit = true;
+  bool _isLoading = true;
   String searchString = '';
+
+  @override
+  void didChangeDependencies() async {
+    if (_isInit) {
+      _isLoading = true;
+      await Provider.of<Books>(context, listen: false)
+          .fetchAndSetBooks()
+          .then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false;
+
+    super.didChangeDependencies();
+  }
 
   Future<void> _refreshBooks(BuildContext context) async {
     await Provider.of<Books>(context, listen: false).fetchAndSetBooks();
@@ -53,7 +70,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    var books = Provider.of<Books>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: SizedBox(
@@ -78,8 +94,9 @@ class _HomeViewState extends State<HomeView> {
               ),
               const SizedBox(width: 50),
               //refresh Books
-              link('Refresh Books', Icons.refresh_sharp,
-                  () { Provider.of<Books>(context, listen: false).fetchAndSetBooks();}, 0),
+              link('Refresh Books', Icons.refresh_sharp, () {
+                Provider.of<Books>(context, listen: false).fetchAndSetBooks();
+              }, 0),
 
               const SizedBox(width: 16),
               //add Book Link
@@ -127,7 +144,11 @@ class _HomeViewState extends State<HomeView> {
         ),
         centerTitle: true,
       ),
-      body: BookGrids(searchValue: searchString),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : BookGrids(searchValue: searchString),
     );
   }
 }
