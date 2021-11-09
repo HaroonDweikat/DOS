@@ -1,0 +1,127 @@
+Sending build context to Docker daemon  67.07kB
+Step 1/12 : FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+ ---> 3d9edf094595
+Step 2/12 : WORKDIR /app
+ ---> Using cache
+ ---> 3a2d8dfb0ae0
+Step 3/12 : COPY *.csproj ./
+ ---> Using cache
+ ---> 8d3650d9262c
+Step 4/12 : RUN dotnet restore
+ ---> Using cache
+ ---> 4614e0523bcd
+Step 5/12 : COPY . ./
+ ---> Using cache
+ ---> 2c062233eee4
+Step 6/12 : RUN dotnet publish  -c Release -o out
+ ---> Using cache
+ ---> c47d2071bd7f
+Step 7/12 : FROM mcr.microsoft.com/dotnet/aspnet:5.0
+ ---> 8102e4dcab1c
+Step 8/12 : WORKDIR /app
+ ---> Using cache
+ ---> bf4977d9f5cb
+Step 9/12 : EXPOSE 80
+ ---> Using cache
+ ---> a05b71f001e8
+Step 10/12 : EXPOSE 443
+ ---> Using cache
+ ---> 36819466aa01
+Step 11/12 : COPY --from=build-env /app/out .
+ ---> Using cache
+ ---> 03e90f4e5067
+Step 12/12 : ENTRYPOINT ["dotnet", "CatalogServer.dll"]
+ ---> Using cache
+ ---> b69c730d1277
+Successfully built b69c730d1277
+Successfully tagged dos_bazarproject_catalog_server:latest
+Sending build context to Docker daemon  56.83kB
+Step 1/12 : FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+ ---> 3d9edf094595
+Step 2/12 : WORKDIR /app
+ ---> Using cache
+ ---> 3a2d8dfb0ae0
+Step 3/12 : COPY *.csproj ./
+ ---> Using cache
+ ---> 45f3659d913b
+Step 4/12 : RUN dotnet restore
+ ---> Using cache
+ ---> f8884b664b87
+Step 5/12 : COPY . ./
+ ---> Using cache
+ ---> 6be6c49e5796
+Step 6/12 : RUN dotnet publish  -c Release -o out
+ ---> Using cache
+ ---> 0d89fbabe3df
+Step 7/12 : FROM mcr.microsoft.com/dotnet/aspnet:5.0
+ ---> 8102e4dcab1c
+Step 8/12 : WORKDIR /app
+ ---> Using cache
+ ---> bf4977d9f5cb
+Step 9/12 : EXPOSE 80
+ ---> Using cache
+ ---> a05b71f001e8
+Step 10/12 : EXPOSE 443
+ ---> Using cache
+ ---> 36819466aa01
+Step 11/12 : COPY --from=build-env /app/out .
+ ---> Using cache
+ ---> e2c4010f28b7
+Step 12/12 : ENTRYPOINT ["dotnet", "OrderAPI.dll"]
+ ---> Using cache
+ ---> 3cb29ed299e6
+Successfully built 3cb29ed299e6
+Successfully tagged dos_bazarproject_order_server:latest
+Attaching to dos_bazarproject_catalog_server_1, dos_bazarproject_order_server_1
+[36mcatalog_server_1  |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[36mcatalog_server_1  |[0m       Now listening on: http://[::]:80
+[36mcatalog_server_1  |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[36mcatalog_server_1  |[0m       Application started. Press Ctrl+C to shut down.
+[36mcatalog_server_1  |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[36mcatalog_server_1  |[0m       Hosting environment: Production
+[36mcatalog_server_1  |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[36mcatalog_server_1  |[0m       Content root path: /app
+[33morder_server_1    |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[33morder_server_1    |[0m       Now listening on: http://[::]:80
+[33morder_server_1    |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[33morder_server_1    |[0m       Application started. Press Ctrl+C to shut down.
+[33morder_server_1    |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[33morder_server_1    |[0m       Hosting environment: Production
+[33morder_server_1    |[0m [40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+[33morder_server_1    |[0m       Content root path: /app
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The book has been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->Data has been update successfully
+[36mcatalog_server_1  |[0m (CatalogServer)--->Data has been saved successfully
+[36mcatalog_server_1  |[0m (CatalogServer)--->The book has been added successfully
+[36mcatalog_server_1  |[0m (CatalogServer)--->Data has been saved successfully
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[33morder_server_1    |[0m (OrderServer)--->The orders have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[33morder_server_1    |[0m (OrderServer)--->Send Query request to CatalogServer
+[33morder_server_1    |[0m (OrderServer)--->StockCount > 0  
+[33morder_server_1    |[0m (OrderServer)--->Send Update request to CatalogServer
+[36mcatalog_server_1  |[0m (CatalogServer)--->update has been done successfully
+[33morder_server_1    |[0m (OrderServer)--->Purchase done successfully
+[33morder_server_1    |[0m (OrderServer)--->The order has been added successfully
+[33morder_server_1    |[0m (OrderServer)--->The data have been saved successfully
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[33morder_server_1    |[0m (OrderServer)--->Send Query request to CatalogServer
+[33morder_server_1    |[0m (OrderServer)--->Book out of stock
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[33morder_server_1    |[0m (OrderServer)--->Send Query request to CatalogServer
+[33morder_server_1    |[0m (OrderServer)--->Book out of stock
+[33morder_server_1    |[0m (OrderServer)--->The orders have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+[36mcatalog_server_1  |[0m (CatalogServer)--->The books have been sent
+Gracefully stopping... (press Ctrl+C again to force)
