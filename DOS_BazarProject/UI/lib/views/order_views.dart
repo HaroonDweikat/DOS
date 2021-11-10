@@ -40,42 +40,42 @@ class _OrdersViewsState extends State<OrdersViews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:
-            //Search box
-            Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 28,
-            ),
-            Container(
-              width: 300,
-              height: 30,
-              decoration: const BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(color: Colors.black, width: 2.0))),
-              child: TextFormField(
-                decoration: const InputDecoration(labelText: 'Search...'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Invalid !';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    searchString = value;
-                  });
-                  // print(value);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+      // appBar: AppBar(
+      // title:
+      //Search box
+      //     Row(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     const Icon(
+      //       Icons.search,
+      //       color: Colors.white,
+      //       size: 28,
+      //     ),
+      //     Container(
+      //       width: 300,
+      //       height: 30,
+      //       decoration: const BoxDecoration(
+      //           border: Border(
+      //               bottom: BorderSide(color: Colors.black, width: 2.0))),
+      //       child: TextFormField(
+      //         decoration: const InputDecoration(labelText: 'Search...'),
+      //         validator: (value) {
+      //           if (value!.isEmpty) {
+      //             return 'Invalid !';
+      //           }
+      //           return null;
+      //         },
+      //         onChanged: (value) {
+      //           setState(() {
+      //             searchString = value;
+      //           });
+      //           // print(value);
+      //         },
+      //       ),
+      //     ),
+      //   ],
+      // ),
+      // ),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),

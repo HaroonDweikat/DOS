@@ -39,7 +39,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> _refreshBooks(BuildContext context) async {
-    await Provider.of<Books>(context, listen: false).fetchAndSetBooks();
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<Books>(context, listen: false)
+        .fetchAndSetBooks()
+        .then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   Widget link(String title, IconData icon, Function() onClick, int index) {
@@ -94,9 +103,8 @@ class _HomeViewState extends State<HomeView> {
               ),
               const SizedBox(width: 50),
               //refresh Books
-              link('Refresh Books', Icons.refresh_sharp, () {
-                Provider.of<Books>(context, listen: false).fetchAndSetBooks();
-              }, 0),
+              link('Refresh Books', Icons.refresh_sharp,
+                  () => _refreshBooks(context), 0),
 
               const SizedBox(width: 16),
               //add Book Link
