@@ -4,6 +4,7 @@ import 'package:bazar/providers/orders.dart';
 import 'package:bazar/views/book_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
 
 class BookItem extends StatefulWidget {
   @override
@@ -117,18 +118,22 @@ class _BookItemState extends State<BookItem> {
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton.icon(
-                        onPressed: () {
-                          Provider.of<Orders>(context, listen: false)
-                              .addOrder(_book.id)
-                              .then((_) {
-                            setState(() {
-                              _book.countInStock -=
-                                  _book.countInStock > 0 ? 1 : 0;
+                        onPressed: () async {
+                          if (await confirm(context)) {
+                            Provider.of<Orders>(context, listen: false)
+                                .addOrder(_book.id)
+                                .then((_) {
+                              setState(() {
+                                _book.countInStock -=
+                                    _book.countInStock > 0 ? 1 : 0;
+                              });
                             });
-                          });
 
-                          Provider.of<Books>(context, listen: false)
-                              .fetchAndSetBooks();
+                            Provider.of<Books>(context, listen: false)
+                                .fetchAndSetBooks();
+                            return print('pressedOK');
+                          }
+                          return print('pressedCancel');
                         },
                         icon: Icon(Icons.add_shopping_cart_sharp),
                         label: Text('Buy'),

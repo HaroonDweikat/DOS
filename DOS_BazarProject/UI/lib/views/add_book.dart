@@ -56,26 +56,16 @@ class _AddBookViewState extends State<AddBookView> {
 
     try {
       // submit book
-      Provider.of<Books>(context, listen: false).addBook(
-        _authData['name'] as String,
-        _authData['topic'] as String,
-        double.parse(_authData['price']),
-        int.parse(_authData['countInStock']),
-      );
-    } on HttpException catch (error) {
-      var errorMessage = 'Authentication failed';
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not a valid email address';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak.';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with that email.';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password.';
-      }
-      _showErrorDialog(errorMessage);
+      Provider.of<Books>(context, listen: false)
+          .addBook(
+            _authData['name'] as String,
+            _authData['topic'] as String,
+            double.parse(_authData['price']),
+            int.parse(_authData['countInStock']),
+          )
+          .then((value) => print(value));
+    } on Exception catch (error) {
+      _showErrorDialog(error.toString());
     } catch (error) {
       const errorMessage = 'Could not add book now. Please try again later.';
       _showErrorDialog(errorMessage);

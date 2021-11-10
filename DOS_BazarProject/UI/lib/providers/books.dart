@@ -97,7 +97,7 @@ class Books extends ChangeNotifier {
     }
   }
 
-  Future<void> addBook(
+  Future<String> addBook(
       String name, String topic, double price, int countInStock) async {
     const url = 'http://localhost:5025/api/books/addBook/';
     try {
@@ -113,11 +113,14 @@ class Books extends ChangeNotifier {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(toJson),
       );
+      print("response =>" + response.body);
+      // if (response.body['ss'] != null) {}
 
       notifyListeners();
     } catch (error) {
       print(error);
     }
+    return "hellow fasdas";
   }
 
   Future<void> updateBook(String id, Map<String, dynamic> newBook) async {

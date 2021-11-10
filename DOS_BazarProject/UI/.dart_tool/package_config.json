@@ -38,6 +38,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "confirm_dialog",
+      "rootUri": "file:///home/harondwiekat/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/confirm_dialog-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///home/harondwiekat/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.3",
       "packageUri": "lib/",
@@ -182,7 +188,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-11-08T16:31:12.452810Z",
+  "generated": "2021-11-10T17:00:02.930821Z",
   "generator": "pub",
   "generatorVersion": "2.14.4"
 }
