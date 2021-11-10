@@ -25,7 +25,7 @@ class Books extends ChangeNotifier {
       // print(response.body);
       final extractedDate = json.decode(response.body) as List<dynamic>;
       if (extractedDate == null) return;
-
+      _items = [];
       extractedDate.forEach((bookData) {
         loadedBooks.add(
           Book(
@@ -36,7 +36,10 @@ class Books extends ChangeNotifier {
               countInStock: bookData['countInStock']),
         );
       });
-      _items = loadedBooks;
+
+      await Future.delayed(Duration(seconds: 2)).then((value) {
+        _items = loadedBooks;
+      });
       notifyListeners();
     } catch (e) {
       print(e);
@@ -113,12 +116,11 @@ class Books extends ChangeNotifier {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(toJson),
       );
-      print("response =>" + response.body);
+      // print("response =>" + response.body);
+      notifyListeners();
       if (jsonDecode(response.body)['detail'] != null) {
         return jsonDecode(response.body)['detail'];
       }
-
-      notifyListeners();
     } catch (error) {
       print(error);
     }

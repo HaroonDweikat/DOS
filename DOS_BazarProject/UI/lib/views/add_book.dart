@@ -37,7 +37,7 @@ class _AddBookViewState extends State<AddBookView> {
         actions: <Widget>[
           // ignore: deprecated_member_use
           FlatButton(
-            child: const Text('Okay'),
+            child: const Text('oK'),
             onPressed: () {
               Navigator.of(ctx).pop();
             },
@@ -66,6 +66,20 @@ class _AddBookViewState extends State<AddBookView> {
           .then((value) {
         if (value != 'done') {
           _showErrorDialog(value);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('The Book added Succesfully'),
+            duration: Duration(seconds: 2),
+          ));
+          setState(() {
+            _authData = {
+              'name': '',
+              'topic': '',
+              'price': 0.0,
+              'countInStock': 0,
+            };
+            _formKey.currentState?.reset();
+          });
         }
       });
     } on Exception catch (error) {
