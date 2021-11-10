@@ -36,9 +36,12 @@ namespace OrderAPI.Data
             return orders;
         }
 
-        public Order GetOrderById(Guid id)
-        {
-            return _context.Orders.FirstOrDefault(p => p.Id == id);
-        }
+//         public Order GetOrderById(Guid id)
+//         {
+//             return _context.Orders.FirstOrDefault(p => p.Id == id);
+//         }
+
+
+
     }
 }

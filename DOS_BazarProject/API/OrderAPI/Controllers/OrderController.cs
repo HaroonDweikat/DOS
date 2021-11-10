@@ -41,19 +41,19 @@ namespace OrderAPI.Controllers
             return Ok(mappedOrders);
         }
 
-        [HttpGet("getOrderById/{id}")]
-        public ActionResult<OrderReadDto> GetOrderById(Guid id)
-        {
-            var order = _repo.GetOrderById(id);
-            if (order == null)
-            {
-                Console.WriteLine("(OrderServer)--->There is no order with this Id :"+id);
-                return NotFound();
-            }
-            Console.WriteLine("(OrderServer)--->The order has been sent");
-            var mappedOrder = _mapper.Map<OrderReadDto>(order);
-            return Ok(mappedOrder);
-        }
+//         [HttpGet("getOrderById/{id}")]
+//         public ActionResult<OrderReadDto> GetOrderById(Guid id)
+//         {
+//             var order = _repo.GetOrderById(id);
+//             if (order == null)
+//             {
+//                 Console.WriteLine("(OrderServer)--->There is no order with this Id :"+id);
+//                 return NotFound();
+//             }
+//             Console.WriteLine("(OrderServer)--->The order has been sent");
+//             var mappedOrder = _mapper.Map<OrderReadDto>(order);
+//             return Ok(mappedOrder);
+//         }
 
 
         public HttpStatusCode SendCheckRequest(Guid id)

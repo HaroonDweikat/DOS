@@ -13,7 +13,7 @@ namespace OrderAPI.Data
 
         public IEnumerable<Order> GetAllOrders();
 
-        public Order GetOrderById(Guid id);
+      //  public Order GetOrderById(Guid id);
 
 
 
