@@ -114,13 +114,15 @@ class Books extends ChangeNotifier {
         body: json.encode(toJson),
       );
       print("response =>" + response.body);
-      // if (response.body['ss'] != null) {}
+      if (jsonDecode(response.body)['detail'] != null) {
+        return jsonDecode(response.body)['detail'];
+      }
 
       notifyListeners();
     } catch (error) {
       print(error);
     }
-    return "hellow fasdas";
+    return 'done';
   }
 
   Future<void> updateBook(String id, Map<String, dynamic> newBook) async {

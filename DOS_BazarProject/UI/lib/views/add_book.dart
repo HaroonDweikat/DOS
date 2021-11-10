@@ -58,12 +58,16 @@ class _AddBookViewState extends State<AddBookView> {
       // submit book
       Provider.of<Books>(context, listen: false)
           .addBook(
-            _authData['name'] as String,
-            _authData['topic'] as String,
-            double.parse(_authData['price']),
-            int.parse(_authData['countInStock']),
-          )
-          .then((value) => print(value));
+        _authData['name'] as String,
+        _authData['topic'] as String,
+        double.parse(_authData['price']),
+        int.parse(_authData['countInStock']),
+      )
+          .then((value) {
+        if (value != 'done') {
+          _showErrorDialog(value);
+        }
+      });
     } on Exception catch (error) {
       _showErrorDialog(error.toString());
     } catch (error) {
