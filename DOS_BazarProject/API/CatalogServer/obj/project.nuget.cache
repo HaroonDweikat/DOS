@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3HdIDGCeHT8Bikj1AHw5W4AOB73zGmbtufWQhqTIT1XFlM2BF5QSgTdSrpHCjHS4AWwhmYhDoJ+lPTsCOXEfiQ==",
+  "dgSpecHash": "EWK79iOenXKDXwfzMWeExiEDD3sORBnab+HVjx6DGEy/VVfajOkcWIfSAIgGQSYNVZX8AlKPUvwZYb5SFil9oA==",
   "success": true,
-  "projectFilePath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/CatalogServer/CatalogServer/CatalogServer.csproj",
+  "projectFilePath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/CatalogServer/CatalogServer.csproj",
   "expectedPackageFiles": [
     "/home/mahdesouqi/.nuget/packages/automapper/10.1.1/automapper.10.1.1.nupkg.sha512",
     "/home/mahdesouqi/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/8.1.1/automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

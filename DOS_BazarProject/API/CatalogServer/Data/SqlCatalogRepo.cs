@@ -39,7 +39,7 @@ namespace CatalogServer.Data
         {
             if (book == null)
             {
-                Console.WriteLine("(CatalogServer)--->The book is null");
+                Console.WriteLine("The book is null");
                 throw new ArgumentNullException();
             }
 
@@ -47,11 +47,11 @@ namespace CatalogServer.Data
 
             if (bookFromDb != null)
             {
-                Console.WriteLine("(CatalogServer)--->The book already added");
+                Console.WriteLine("The book already added");
                 return false;
             }
             
-            Console.WriteLine("(CatalogServer)--->The book has been added successfully");
+            Console.WriteLine("The book has been added successfully");
             _context.Catalogs.Add(book);
             return true;
         }
@@ -59,13 +59,13 @@ namespace CatalogServer.Data
 
         public bool SaveChanges()
         {
-            Console.WriteLine("(CatalogServer)--->Data has been saved successfully");
+            Console.WriteLine("Data has been saved successfully");
             return (_context.SaveChanges() >= 0);
         }
 
         public void Update(Book book)
         {
-            Console.WriteLine("(CatalogServer)--->Data has been update successfully");
+            Console.WriteLine("Data has been update successfully");
         }
 
         public int CheckStock(Guid id)
@@ -96,7 +96,7 @@ namespace CatalogServer.Data
             
             _context.Database.ExecuteSqlInterpolated(
                 $"UPDATE Catalogs SET CountInStock= CountInStock - 1 WHERE Id={id} ");
-            Console.WriteLine("(CatalogServer)--->update has been done successfully");
+            Console.WriteLine("update has been done successfully");
             
         }
     }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qyuGsnkgtd+GouONMtFroQ7ZWIWmLFQUeNg8n7P86D7619WrKgbr+FF7T8/ksy1biD0UX1fyriheAkIgF6aQ2w==",
+  "dgSpecHash": "KA0QQLoFgZy/prdpN1KRVr6mlxx2tfB7iG4FKiZTrtLrkvY/oges9erFUJIxpv2UTt+ngyqyHkyIpC8nfRzb9A==",
   "success": true,
-  "projectFilePath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/OrderAPI/OrderAPI/OrderAPI.csproj",
+  "projectFilePath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/DOS_BazarProject/DOS/DOS_BazarProject/API/OrderAPI/OrderAPI.csproj",
   "expectedPackageFiles": [
     "/home/mahdesouqi/.nuget/packages/automapper/10.1.1/automapper.10.1.1.nupkg.sha512",
     "/home/mahdesouqi/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/8.1.1/automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

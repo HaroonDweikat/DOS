@@ -1,27 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
 using AutoMapper;
 using CatalogServer.Data;
 using CatalogServer.DTO;
 using CatalogServer.Model;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CatalogServer.Controllers
 {
     [Controller]
     [Route("api/books")]// tha main URL for this server 
     public class CatalogController : ControllerBase// this class represent the conrol unit in the server which is the unit that receive 
-        //the client request and handle it and sned back the response 
+        //the client request and handle it and send back the response 
     {
-        
+        private readonly IHttpClientFactory _clientFactory;
         private readonly ICatalogRepo _repo;
         private readonly IMapper _mapper;
-
-        public CatalogController( ICatalogRepo repo,IMapper mapper)
+        private readonly string _hostname;
+        public CatalogController( ICatalogRepo repo,IMapper mapper,IHttpClientFactory clientFactory)
         {
+            _clientFactory = clientFactory;
             _repo = repo;
             _mapper = mapper;
+            _hostname = Dns.GetHostName();
         }
 
 
@@ -32,10 +38,15 @@ namespace CatalogServer.Controllers
             var books=_repo.GetAllBooks();// bring the data from the database
             if (books == null)// check if the data value is null that mean that there is no data 
             {
-                Console.WriteLine("(CatalogServer)--->There is no books to display in the CatalogServer DB");
+                Console.WriteLine("There is no books to display in the CatalogServer DB");
                 return NotFound();
             }
-            Console.WriteLine("(CatalogServer)--->The books have been sent");
+            
+            var client = _clientFactory.CreateClient();
+            var request ="http://cache_server/api/cache/books";
+            client.PostAsJsonAsync(request,books);
+            Console.WriteLine("Send the data to the CacheServer");
+            Console.WriteLine("The books have been sent");
             var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);//map from Book to BookReadDto
             return Ok(mappedBook);
         }
@@ -48,10 +59,14 @@ namespace CatalogServer.Controllers
             var book = _repo.GetInfoById(id);
             if (book == null)
             {
-                Console.WriteLine("(CatalogServer)--->There is no book with this ID :"+id);
+                Console.WriteLine("There is no book with this ID :"+id);
                 return NotFound();
             }
-            Console.WriteLine("(CatalogServer)--->The book has been sent");
+            var client = _clientFactory.CreateClient();
+            var request ="http://cache_server/api/cache/book";
+            client.PostAsJsonAsync(request,book);
+            Console.WriteLine("Send the data to the CacheServer");
+            Console.WriteLine("The book has been sent");
             var mappedBook= _mapper.Map<BookReadDto>(book);
             return Ok(mappedBook);
         }
@@ -64,14 +79,22 @@ namespace CatalogServer.Controllers
             var books = _repo.SearchByTopic(topic);
             if (books == null)
             {
-                Console.WriteLine("(CatalogServer)--->There is no books with this topic :"+topic);
+                Console.WriteLine("There is no books with this topic :"+topic);
                 return NotFound();
             }
-            Console.WriteLine("(CatalogServer)--->The books have been sent");
+            var client = _clientFactory.CreateClient();
+            var request ="http://cache_server/api/cache/books/"+topic;
+            client.PostAsJsonAsync(request,books);
+            Console.WriteLine("Send the data to the CacheServer");
+            Console.WriteLine("The books have been sent");
             var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);
             return Ok(mappedBook);
         }
 
+        
+        
+        
+        
 
         //this method used to update a value in the database for the book that have the passin id
         [HttpPatch("update/{id}")]
@@ -80,7 +103,7 @@ namespace CatalogServer.Controllers
             var bookFromDb = _repo.GetInfoById(id);//bring the data form the database
             if (bookFromDb == null)//check it value 
             {
-                Console.WriteLine("(CatalogServer)--->There is no book with this Id :"+id);
+                Console.WriteLine("There is no book with this Id :"+id);
                 return NotFound();
             }
             var commandToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
@@ -90,9 +113,10 @@ namespace CatalogServer.Controllers
             //json request obj
             if (!TryValidateModel(commandToPatch))//to check if the update have been done correctly
             {
-                Console.WriteLine("(CatalogServer)--->Something goes wrong in updating process");
+                Console.WriteLine("Something goes wrong in updating process");
                 return ValidationProblem(ModelState);
             }
+            
             _mapper.Map(commandToPatch,bookFromDb);
             _repo.Update(bookFromDb);
             _repo.SaveChanges();//save the update change in the database 
@@ -100,7 +124,45 @@ namespace CatalogServer.Controllers
         }
 
         
-        //this method used to create a new book in the database 
+        [HttpPatch("updateCacheAndSync/{id}")]
+        public ActionResult UpdateCache(Guid id ,[FromBody]JsonPatchDocument<BookUpdateDto> pathDoc)
+        {
+            var bookFromDb = _repo.GetInfoById(id);//bring the data form the database
+            if (bookFromDb == null)//check it value 
+            {
+                Console.WriteLine("There is no book with this Id :"+id);
+                return NotFound();
+            }
+            var commandToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
+            
+            //update
+            pathDoc.ApplyTo(commandToPatch,ModelState);// apply the method which is update to the given field which will be extract from the
+            //json request obj
+            if (!TryValidateModel(commandToPatch))//to check if the update have been done correctly
+            {
+                Console.WriteLine("Something goes wrong in updating process");
+                return ValidationProblem(ModelState);
+            }
+            
+            var client = _clientFactory.CreateClient();
+            var request ="http://"+_hostname=="catalog_server_replica"?"catalog_server_replica":"catalog_server"+"/api/book/updateCacheAndSync/"+id;
+            client.PatchAsync(request,new StringContent(JsonConvert.SerializeObject(pathDoc)));
+            Console.WriteLine("Sync CatalogServer");
+            
+            request ="http://cache_server/api/cache/"+id;
+            client.DeleteAsync(request);
+            Console.WriteLine("Send update request to the cache server");
+            
+            
+            _mapper.Map(commandToPatch,bookFromDb);
+            _repo.Update(bookFromDb);
+            _repo.SaveChanges();//save the update change in the database 
+            return NoContent();
+        }
+        
+        
+        
+        
         [HttpPost("addBook")]
         public ActionResult<BookReadDto> AddBook([FromBody] BookCreateDto book)
         {
@@ -114,6 +176,38 @@ namespace CatalogServer.Controllers
             var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
             return Ok(mappedReadBook);
         }
+        
+        
+        
+        
+        //this method used to create a new book in the database 
+        [HttpPost("addBookToCacheAndSync")]
+        public ActionResult<BookReadDto> AddBookToCacheAndSync([FromBody] BookCreateDto book)
+        {
+            var mappedBook = _mapper.Map<Book>(book);
+            var checkExistence=_repo.AddBook(mappedBook);
+            if (!checkExistence)// to check if the book already exist
+            {
+                return Problem("Book already exist");
+            }
+            _repo.SaveChanges();
+            
+            var client = _clientFactory.CreateClient();
+            var request ="http://"+_hostname=="catalog_server_replica"?"catalog_server_replica":"catalog_server"+"/api/book/addBookToCacheAndSync";
+            client.PostAsJsonAsync(request,book);
+            Console.WriteLine("Sync The CatalogServer");
+            
+            request ="http://cache_server/api/cache/book/"+mappedBook.Id;
+            client.PostAsJsonAsync(request,mappedBook);
+            Console.WriteLine("Send book to the cache server");
+            
+            
+            var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
+            return Ok(mappedReadBook);
+        }
+
+        
+        
 
         //this method usage is to decrease the book stock count in the database when a Purchase operation occur
         [HttpGet("checkStock/{id}")]
@@ -145,8 +239,33 @@ namespace CatalogServer.Controllers
         
              return Ok();
         }
+         
+         
+         [HttpPost("decreaseAndSync/{id}")]
+         public ActionResult DecreaseAndSync(Guid id)
+         {
+             
+             _repo.DecreaseBookCount(id);
+        
+             
+             var client = _clientFactory.CreateClient();
+             var request ="http://"+_hostname=="catalog_server_replica"?"catalog_server_replica":"catalog_server"+"/api/book/decreaseAndSync/"+id;
+             client.PostAsJsonAsync(request,"");
+             Console.WriteLine("Sync The CatalogServer");
+            
+             request ="http://cache_server/api/cache/"+id;
+             client.DeleteAsync(request);
+             Console.WriteLine("send delete to the cache server");
+             
+             
+             return Ok();
+         }
         
         
+         
+         
+         
+         
         
         // [HttpPost("Increase/{id}")]
         // public ActionResult IncreaseBookCount(Guid id)
