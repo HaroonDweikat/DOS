@@ -64,8 +64,29 @@ namespace CacheAPI.Controller
         }
         
         
+        [HttpPost("books")]
+        public ActionResult AddBooksToCache([FromBody] IEnumerable<Book> books)
+        {
+            string key = "books";
+            if (ModelState.IsValid)
+            {
+                _dictionary[key] = new Cache
+                {
+                    Book = null,
+                    Books = books,
+                    Orders = null
+                };
+                Console.WriteLine("The books  added to the cache successfully");
+                return Ok();
+            }
+            
+            Console.WriteLine("There is an error in the given data");
+            return BadRequest();
+        }
+        
+        
         [HttpPost("books/{key}")]
-        public ActionResult AddBooksToCache(string key,[FromBody] IEnumerable<Book> books)
+        public ActionResult AddBooksTopicToCache(string key,[FromBody] IEnumerable<Book> books)
         {
            
             if (ModelState.IsValid)
@@ -112,6 +133,7 @@ namespace CacheAPI.Controller
             if (_dictionary.ContainsKey(key))
             {
                 _dictionary.Remove(key);
+                Console.WriteLine("Data with Key : "+key +" has been deleted successfully");
             }
 
             return NotFound();

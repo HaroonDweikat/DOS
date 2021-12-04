@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -22,13 +23,13 @@ namespace OrderAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            var connectionString = Dns.GetHostName() == "order" ? "OrderConnection" : "Order_ReplicaConnection";
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "OrderAPI", Version = "v1"}); });
             services.AddHttpClient();
             services.AddDbContext<OrderContext>(opt =>
             {
-                opt.UseSqlite(Configuration.GetConnectionString("OrderConnection"));
+                opt.UseSqlite(Configuration.GetConnectionString(connectionString));
             });
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IOrderRepo, SqlOrderRepo>();

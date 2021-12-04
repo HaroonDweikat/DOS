@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OrderAPI.Data;
@@ -18,12 +19,14 @@ namespace OrderAPI.Controllers
         private readonly IOrderRepo _repo;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly string _hostName;
 
         public OrderController( IOrderRepo repo,IMapper mapper,IHttpClientFactory clientFactory)
         {
             _repo = repo;
             _mapper = mapper;
             _clientFactory = clientFactory;
+            _hostName = Dns.GetHostName();
         }
 
 
@@ -33,10 +36,17 @@ namespace OrderAPI.Controllers
             var orders = _repo.GetAllOrders();
             if (orders == null)
             {
-                Console.WriteLine("(OrderServer)--->The order is null");
+                Console.WriteLine("The order is null");
                 return NotFound();
             }
-            Console.WriteLine("(OrderServer)--->The orders have been sent");
+            
+            var client = _clientFactory.CreateClient();
+            var request ="http://cache_server/api/cache/orders";
+            client.PostAsJsonAsync(request,orders);
+            Console.WriteLine("Send the data to the CacheServer");
+           
+            
+            Console.WriteLine("The orders have been sent");
             var mappedOrders = _mapper.Map<IEnumerable<OrderReadDto>>(orders);
             return Ok(mappedOrders);
         }
@@ -60,7 +70,7 @@ namespace OrderAPI.Controllers
         {
             var client = _clientFactory.CreateClient();//create a mock client to send the "check request"
             var request = new HttpRequestMessage(HttpMethod.Get,"http://catalog_server/api/books/checkStock/"+id );
-            Console.WriteLine("(OrderServer)--->Send Query request to CatalogServer");
+            Console.WriteLine("Send Query request to CatalogServer");
             var response = client.Send(request);
 
             return response.StatusCode;
@@ -72,7 +82,7 @@ namespace OrderAPI.Controllers
         {
             var client = _clientFactory.CreateClient();//create a mock client to send the "check request"
             var request = new HttpRequestMessage(HttpMethod.Post,"http://catalog_server/api/books/decrease/"+id );
-            Console.WriteLine("(OrderServer)--->Send Update request to CatalogServer");
+            Console.WriteLine("Send Update request to CatalogServer");
             client.Send(request);
 
             
@@ -94,9 +104,9 @@ namespace OrderAPI.Controllers
            if (response == HttpStatusCode.OK)//everything is ok and the order have been stored
            {
                
-               Console.WriteLine("(OrderServer)--->StockCount > 0  ");
+               Console.WriteLine("StockCount > 0  ");
                SendDecreaseRequest(itemId);
-               Console.WriteLine("(OrderServer)--->Purchase done successfully");
+               Console.WriteLine("Purchase done successfully");
                _repo.Purchase(mappedCreateOrder);
                _repo.SaveChanges();
                var mappedRead = _mapper.Map<OrderReadDto>(mappedCreateOrder);
@@ -104,16 +114,75 @@ namespace OrderAPI.Controllers
            }
            else if (response == HttpStatusCode.NotFound)// the required book is not exist in our database
            {
-               Console.WriteLine("(OrderServer)--->There is no book with this Id :"+order.ItemId+" request failed");
+               Console.WriteLine("There is no book with this Id :"+order.ItemId+" request failed");
                return NotFound();
            }
            else if (response == HttpStatusCode.NoContent)// the book is out of stock
            {
-               Console.WriteLine("(OrderServer)--->Book out of stock");
+               Console.WriteLine("Book out of stock");
                return Problem("Book out of stock");
            }
 
            return Problem("There is Something wrong !! ");
+
+        }
+
+        [HttpPost("addPureOrder")]
+        public ActionResult AddPureOrder(OrderCreateDto orderCreateDto)
+        {
+            var mapped = _mapper.Map<Order>(orderCreateDto);
+            _repo.Purchase(mapped);
+            _repo.SaveChanges();
+            return Ok();
+        }
+        
+        
+        
+        [HttpPost("addOrderToCacheAndSync")]
+        public  ActionResult<OrderReadDto> PurchaseAndCacheAndSync(OrderCreateDto order)
+        {
+            var mappedCreateOrder = _mapper.Map<Order>(order);
+            Guid itemId = mappedCreateOrder.ItemId;
+            
+            var response=  SendCheckRequest(itemId);
+            
+            //check the response StatusCode to determine the response of the client request
+            if (response == HttpStatusCode.OK)//everything is ok and the order have been stored
+            {
+               
+                Console.WriteLine("StockCount > 0  ");
+                SendDecreaseRequest(itemId);
+                Console.WriteLine("Purchase done successfully");
+                _repo.Purchase(mappedCreateOrder);
+                _repo.SaveChanges();
+                
+                
+                var client = _clientFactory.CreateClient();
+                var host = _hostName == "order_replica" ? "order" : "order_replica";
+                var request ="http://"+host+"/api/order/addPureOrder";
+                client.PostAsJsonAsync(request,order);
+                Console.WriteLine("Sync The Other Server");
+            
+                request ="http://cache_server/api/cache";
+                client.DeleteAsync(request);
+                Console.WriteLine("send delete to the cache server");
+                
+                
+                var mappedRead = _mapper.Map<OrderReadDto>(mappedCreateOrder);
+                return Ok(mappedRead);
+            }
+            else if (response == HttpStatusCode.NotFound)// the required book is not exist in our database
+            {
+                Console.WriteLine("There is no book with this Id :"+order.ItemId+" request failed");
+                return NotFound();
+            }
+            else if (response == HttpStatusCode.NoContent)// the book is out of stock
+            {
+                Console.WriteLine("Book out of stock");
+                return Problem("Book out of stock");
+            }
+
+            return Problem("There is Something wrong !! ");
 
         }
 

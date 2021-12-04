@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using AutoMapper;
 using CatalogServer.Data;
 using CatalogServer.DTO;
@@ -15,7 +16,7 @@ namespace CatalogServer.Controllers
 {
     [Controller]
     [Route("api/books")]// tha main URL for this server 
-    public class CatalogController : ControllerBase// this class represent the conrol unit in the server which is the unit that receive 
+    public class CatalogController : ControllerBase// this class represent the control unit in the server which is the unit that receive 
         //the client request and handle it and send back the response 
     {
         private readonly IHttpClientFactory _clientFactory;
@@ -52,7 +53,7 @@ namespace CatalogServer.Controllers
         }
 
         
-        //this method response is a book info that have the passin id
+        //this method response is a book info that have the pass in id
         [HttpGet("getInfoById/{id}")]//same
         public ActionResult<BookReadDto> GetBookById(Guid id)
         {
@@ -63,7 +64,7 @@ namespace CatalogServer.Controllers
                 return NotFound();
             }
             var client = _clientFactory.CreateClient();
-            var request ="http://cache_server/api/cache/book";
+            var request ="http://cache_server/api/cache/book/"+id;
             client.PostAsJsonAsync(request,book);
             Console.WriteLine("Send the data to the CacheServer");
             Console.WriteLine("The book has been sent");
@@ -72,7 +73,7 @@ namespace CatalogServer.Controllers
         }
 
         
-       // this method response is a list of all the books that we have the passin topic
+       // this method response is a list of all the books that we have the pass in topic
         [HttpGet("searchByTopic/{topic}")]//same
         public ActionResult<IEnumerable<BookReadDto>> SearchByTopic(string topic)
         {
@@ -96,7 +97,7 @@ namespace CatalogServer.Controllers
         
         
 
-        //this method used to update a value in the database for the book that have the passin id
+        //this method used to update a value in the database for the book that have the pass in id
         [HttpPatch("update/{id}")]
         public ActionResult UpdateCost(Guid id ,[FromBody]JsonPatchDocument<BookUpdateDto> pathDoc)
         {
@@ -133,28 +134,30 @@ namespace CatalogServer.Controllers
                 Console.WriteLine("There is no book with this Id :"+id);
                 return NotFound();
             }
-            var commandToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
+            var bookToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
             
             //update
-            pathDoc.ApplyTo(commandToPatch,ModelState);// apply the method which is update to the given field which will be extract from the
+            pathDoc.ApplyTo(bookToPatch,ModelState);// apply the method which is update to the given field which will be extract from the
             //json request obj
-            if (!TryValidateModel(commandToPatch))//to check if the update have been done correctly
+            if (!TryValidateModel(bookToPatch))//to check if the update have been done correctly
             {
                 Console.WriteLine("Something goes wrong in updating process");
                 return ValidationProblem(ModelState);
             }
             
             var client = _clientFactory.CreateClient();
-            var request ="http://"+_hostname=="catalog_server_replica"?"catalog_server_replica":"catalog_server"+"/api/book/updateCacheAndSync/"+id;
-            client.PatchAsync(request,new StringContent(JsonConvert.SerializeObject(pathDoc)));
-            Console.WriteLine("Sync CatalogServer");
+            var host = _hostname == "catalog_replica" ? "catalog" : "catalog_replica";
+            var request ="http://"+host+"/api/books/update/"+id;
+            client.PatchAsync(request,new StringContent(JsonConvert.SerializeObject(pathDoc), Encoding.UTF8,
+                "application/json-patch+json"));
+            Console.WriteLine("Sync The Other Server");
             
             request ="http://cache_server/api/cache/"+id;
             client.DeleteAsync(request);
-            Console.WriteLine("Send update request to the cache server");
+            Console.WriteLine("Send delete request to the cache server");
             
             
-            _mapper.Map(commandToPatch,bookFromDb);
+            _mapper.Map(bookToPatch,bookFromDb);
             _repo.Update(bookFromDb);
             _repo.SaveChanges();//save the update change in the database 
             return NoContent();
@@ -164,16 +167,16 @@ namespace CatalogServer.Controllers
         
         
         [HttpPost("addBook")]
-        public ActionResult<BookReadDto> AddBook([FromBody] BookCreateDto book)
+        public ActionResult<BookReadDto> AddBook([FromBody] Book book)
         {
-            var mappedBook = _mapper.Map<Book>(book);
-            var checkExistence=_repo.AddBook(mappedBook);
+            
+            var checkExistence=_repo.AddBook(book);
             if (!checkExistence)// to check if the book already exist
             {
                 return Problem("Book already exist");
             }
             _repo.SaveChanges();
-            var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
+            var mappedReadBook = _mapper.Map<BookReadDto>(book);
             return Ok(mappedReadBook);
         }
         
@@ -191,15 +194,15 @@ namespace CatalogServer.Controllers
                 return Problem("Book already exist");
             }
             _repo.SaveChanges();
-            
             var client = _clientFactory.CreateClient();
-            var request ="http://"+_hostname=="catalog_server_replica"?"catalog_server_replica":"catalog_server"+"/api/book/addBookToCacheAndSync";
-            client.PostAsJsonAsync(request,book);
-            Console.WriteLine("Sync The CatalogServer");
-            
-            request ="http://cache_server/api/cache/book/"+mappedBook.Id;
+            var host = _hostname == "catalog_replica" ? "catalog" : "catalog_replica";
+            var request ="http://"+host+"/api/books/addBook";
             client.PostAsJsonAsync(request,mappedBook);
-            Console.WriteLine("Send book to the cache server");
+            Console.WriteLine("Sync The Other Server");
+            
+            request ="http://cache_server/api/cache/books";
+            client.DeleteAsync(request);
+            Console.WriteLine("send delete to the cache server");
             
             
             var mappedReadBook = _mapper.Map<BookReadDto>(mappedBook);
@@ -249,9 +252,9 @@ namespace CatalogServer.Controllers
         
              
              var client = _clientFactory.CreateClient();
-             var request ="http://"+_hostname=="catalog_server_replica"?"catalog_server_replica":"catalog_server"+"/api/book/decreaseAndSync/"+id;
+             var request ="http://"+_hostname=="catalog_replica"?"catalog":"catalog_replica"+"/api/books/decrease/"+id;
              client.PostAsJsonAsync(request,"");
-             Console.WriteLine("Sync The CatalogServer");
+             Console.WriteLine("Sync The Other Server");
             
              request ="http://cache_server/api/cache/"+id;
              client.DeleteAsync(request);
