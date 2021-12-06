@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
 using CatalogServer.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 
@@ -29,11 +24,12 @@ namespace CatalogServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
+            var connectionString = Dns.GetHostName() == "catalog" ? "CatalogConnection" : "Catalog_ReplicaConnection";
             services.AddControllers().AddNewtonsoftJson(s =>
             {
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            });//this service used to add controller to the api
+            });
+            services.AddControllers();//this service used to add controller to the api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CatalogServer", Version = "v1"});
@@ -41,14 +37,14 @@ namespace CatalogServer
 
             services.AddDbContext<CatalogContext>(opt =>
             {
-                opt.UseSqlite(Configuration.GetConnectionString("CatalogConnection"));
+                opt.UseSqlite(Configuration.GetConnectionString(connectionString));
             }); //this service usage is to specify the class which will be add as a DataBase context class
-                // and specfy the DataBase type that we will use in our case is SqlLite
-            
-            services.AddScoped<ICatalogRepo, SqlCatalogRepo>();
+                // and specify the DataBase type that we will use in our case is SqlLite
+            services.AddHttpClient();
+            services.AddScoped<ICatalogRepo,SqlCatalogRepo>();
             //this service used to map between the interface and it implementation
             //the Scoped mean that whenever a ICatalogRepo created it will be inject by the SqlCatalogRepo
-            //and it's refare to the lifetime of the service which is connected to Client request (each client has his own serivce)
+            //and it's refare to the lifetime of the service which is connected to Client request (each client has his own service)
             
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             

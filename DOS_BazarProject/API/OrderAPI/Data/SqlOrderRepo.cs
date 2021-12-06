@@ -17,16 +17,16 @@ namespace OrderAPI.Data
         {
             if (order == null)
             {
-                Console.WriteLine("(OrderServer)--->The order is null");
+                Console.WriteLine("The order is null");
                 throw new ArgumentNullException();
             }
-            Console.WriteLine("(OrderServer)--->The order has been added successfully");
+            Console.WriteLine("The order has been added successfully");
             _context.Orders.Add(order);
         }
 
         public bool SaveChanges()
         {
-            Console.WriteLine("(OrderServer)--->The data have been saved successfully");
+            Console.WriteLine("The data have been saved successfully");
             return (_context.SaveChanges()>=0);
         }
 
