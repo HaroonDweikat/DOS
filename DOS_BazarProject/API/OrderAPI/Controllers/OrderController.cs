@@ -163,7 +163,7 @@ namespace OrderAPI.Controllers
                 client.PostAsJsonAsync(request,order);
                 Console.WriteLine("Sync The Other Server");
             
-                request ="http://cache_server/api/cache";
+                request ="http://cache_server/api/cache/orders";
                 client.DeleteAsync(request);
                 Console.WriteLine("send delete to the cache server");
                 

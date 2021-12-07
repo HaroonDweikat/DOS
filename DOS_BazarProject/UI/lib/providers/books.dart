@@ -1,8 +1,10 @@
-import 'dart:convert';
+// ignore_for_file: avoid_print
 
+import 'dart:convert';
 import 'package:bazar/models/book.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math';
 
 class Books extends ChangeNotifier {
   List<Book> _items = [];
@@ -17,12 +19,44 @@ class Books extends ChangeNotifier {
     return _bookItem;
   }
 
+  final String chaceUrl = 'http://localhost:5160/api/cache';
+  int catalogServerIndex = Random().nextInt(100);
+  final List<String> catalogServer = [
+    'http://localhost:5025/api/books',
+    'http://localhost:6025/api/books',
+  ];
+
   Future<void> fetchAndSetBooks() async {
-    String getAllBooks = 'http://localhost:5025/api/books/getAllBooks/';
     try {
-      final response = await http.get(Uri.parse(getAllBooks));
+      var response = await http.get(
+        Uri.parse('$chaceUrl/books'),
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          // "Accept": "application/json",
+          'Access-Control-Allow-Methods': 'GET, HEAD'
+        },
+      );
+      if (response.statusCode > 400) {
+        //cache miss
+        print('response code  => ${response.statusCode}');
+        print('cache miss');
+        response = await http.get(Uri.parse(
+            '${catalogServer[catalogServerIndex % catalogServer.length]}/getAllBooks'));
+        print(
+            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}');
+        catalogServerIndex++;
+      } else {
+        print('cache hit');
+      }
+
+      // var response = await http.get(Uri.parse(
+      //     '${catalogServer[catalogServerIndex % catalogServer.length]}/getAllBooks'));
+      // print(
+      //     'catalogServer send request to replica => ${catalogServer[catalogServerIndex]}');
+      // catalogServerIndex++;
+
       final List<Book> loadedBooks = [];
-      // print(response.body);
+      // print(' responce ' + response.body);
       final extractedDate = json.decode(response.body) as List<dynamic>;
       if (extractedDate == null) return;
       _items = [];
@@ -42,7 +76,7 @@ class Books extends ChangeNotifier {
       });
       notifyListeners();
     } catch (e) {
-      print(e);
+      print('fetch all books => $e');
     }
   }
 
@@ -78,11 +112,21 @@ class Books extends ChangeNotifier {
   }
 
   Future<Book> findById(String bookId) async {
-    String getBookById =
-        'http://localhost:5025/api/books/getInfoById/' + bookId;
+    // String getBookById =
+    //     'http://localhost:5025/api/books/getInfoById/' + bookId;
     var findedBook;
     try {
-      final response = await http.get(Uri.parse(getBookById));
+      // final response = await http.get(Uri.parse(getBookById));
+      var response = await http.get(Uri.parse('$chaceUrl/$bookId'));
+      if (response.statusCode > 400) {
+        //cache miss
+        print('response code  => ${response.statusCode}');
+        response = await http.get(Uri.parse(
+            '${catalogServer[catalogServerIndex % catalogServer.length]}/getInfoById/$bookId'));
+        print(
+            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/getInfoById/$bookId');
+        catalogServerIndex++;
+      }
       final extractedDate = json.decode(response.body) as Map<String, dynamic>;
 
       findedBook = Book(
@@ -102,7 +146,7 @@ class Books extends ChangeNotifier {
 
   Future<String> addBook(
       String name, String topic, double price, int countInStock) async {
-    const url = 'http://localhost:5025/api/books/addBook/';
+    // const url = 'http://localhost:5025/api/books/addBook/';
     try {
       var toJson = {
         "bookName": name,
@@ -111,11 +155,22 @@ class Books extends ChangeNotifier {
         "countInStock": countInStock,
       };
 
-      final response = await http.post(
-        Uri.parse(url),
+      // final response = await http.post(
+      //   Uri.parse(url),
+      //   headers: {'Content-Type': 'application/json'},
+      //   body: json.encode(toJson),
+      // );
+      var response = await http.post(
+        Uri.parse(
+            '${catalogServer[catalogServerIndex % catalogServer.length]}/addBookToCacheAndSync'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(toJson),
       );
+      print(
+          'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/addBookToCacheAndSync');
+      print('data => ' + json.encode(toJson));
+      catalogServerIndex++;
+
       // print("response =>" + response.body);
       notifyListeners();
       if (jsonDecode(response.body)['detail'] != null) {
@@ -127,13 +182,12 @@ class Books extends ChangeNotifier {
     return 'done';
   }
 
+//#TODO:update problem send array
   Future<void> updateBook(String id, Map<String, dynamic> newBook) async {
     final prodIndex = _items.indexWhere((book) => book.id == id);
     if (prodIndex >= 0) {
       try {
-        final url = 'http://localhost:5025/api/books/update/$id';
-
-        final jsonObj = [];
+        List<Map<String, dynamic>> jsonObj = [];
         print(newBook);
         newBook.forEach((key, value) {
           if (_items[prodIndex].name == value ||
@@ -145,11 +199,24 @@ class Books extends ChangeNotifier {
             jsonObj.add(newValue);
           }
         });
+        // await http.patch(
+        //   Uri.parse(url),
+        //   headers: {'Content-Type': 'application/json-patch+json'},
+        //   body: json.encode(jsonObj),
+        // );
+        print(
+            '--------------------------------------------------\n jjj => ${json.encode(jsonObj)}\n -----------------------------------');
         await http.patch(
-          Uri.parse(url),
+          Uri.parse(
+              '${catalogServer[catalogServerIndex % catalogServer.length]}/updateCacheAndSync/$id'),
           headers: {'Content-Type': 'application/json-patch+json'},
           body: json.encode(jsonObj),
         );
+
+        print(
+            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/updateCacheAndSync/$id');
+        print('data => ' + jsonObj.toString());
+        catalogServerIndex++;
       } catch (e) {
         print(e);
       } finally {

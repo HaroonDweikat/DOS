@@ -45,16 +45,18 @@ namespace CacheAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CacheAPI v1"));
             }
             
-            app.UseRouting();
+            app.UseRouting(); // allow routing in the server controller
             
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-            
-            app.UseAuthorization();
+            //allow request from any origin using any method
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseAuthorization();// add Authorization in our http
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });// Map the controller for their endpoints
+
         }
     }
 }

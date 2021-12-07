@@ -5,8 +5,8 @@ services:
     build: ./API/CacheAPI/
     hostname: cache_server
     ports:
-      - 5060:80
-      - 5061:443
+      - 5160:80
+      - 5161:443
     networks:
       - network
   catalog_server:

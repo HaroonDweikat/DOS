@@ -28,7 +28,7 @@ class _OrdersViewsState extends State<OrdersViews> {
       ).fetchAndSetOrders().then((_) {
         setState(() {
           loadedOrders = Provider.of<Orders>(context, listen: false).orders;
-          print(loadedOrders.length);
+          // print(loadedOrders.length);
           _isLoading = false;
         });
       });
@@ -85,7 +85,15 @@ class _OrdersViewsState extends State<OrdersViews> {
                 child: Column(
                   children: [
                     const SizedBox(height: 80),
-                    OrderList(loadedOrders),
+                    loadedOrders.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'There is no orders :(',
+                              style:
+                                  TextStyle(fontSize: 30, color: Colors.grey),
+                            ),
+                          )
+                        : OrderList(loadedOrders),
                   ],
                 ),
               ),
