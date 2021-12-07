@@ -136,6 +136,8 @@ namespace CatalogServer.Controllers
             }
             var bookToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
             
+            
+            
             //update
             pathDoc.ApplyTo(bookToPatch,ModelState);// apply the method which is update to the given field which will be extract from the
             //json request obj
