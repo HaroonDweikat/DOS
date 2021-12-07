@@ -156,11 +156,11 @@ namespace CatalogServer.Controllers
             
             request ="http://cache_server/api/cache/"+id;
             client.DeleteAsync(request);
-            Console.WriteLine("Send delete request to the cache server(delete the book)");
+            Console.WriteLine("Send delete request to the cache server");
             
             request ="http://cache_server/api/cache/books";
             client.DeleteAsync(request);
-            Console.WriteLine("Send delete request to the cache server(delete all of the books)");
+            Console.WriteLine("Send delete request all books  to the cache server");
             
             
             _mapper.Map(bookToPatch,bookFromDb);

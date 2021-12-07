@@ -90,8 +90,29 @@ class Books extends ChangeNotifier {
       return _items.toList();
     }
     final List<Book> loadedBooks = [];
+
+    // final response = await http.get(Uri.parse(getBookByTopic));
     try {
-      final response = await http.get(Uri.parse(getBookByTopic));
+      var response = await http.get(
+        Uri.parse('$chaceUrl/$value'),
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          // "Accept": "application/json",
+          'Access-Control-Allow-Methods': 'GET, HEAD'
+        },
+      );
+      if (response.statusCode > 400) {
+        //cache miss
+        print('response code  => ${response.statusCode}');
+        print('cache miss');
+        response = await http.get(Uri.parse(
+            '${catalogServer[catalogServerIndex % catalogServer.length]}/searchByTopic/$value'));
+        print(
+            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/searchByTopic/$value');
+        catalogServerIndex++;
+      } else {
+        print('cache hit');
+      }
 
       final extractedDate = json.decode(response.body) as List<dynamic>;
       if (extractedDate == null) return loadedBooks;
