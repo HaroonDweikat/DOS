@@ -43,10 +43,6 @@ namespace CatalogServer.Controllers
                 return NotFound();
             }
             
-            var client = _clientFactory.CreateClient();
-            var request ="http://cache_server/api/cache/books";
-            client.PostAsJsonAsync(request,books);
-            Console.WriteLine("Send the data to the CacheServer");
             Console.WriteLine("The books have been sent");
             var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);//map from Book to BookReadDto
             return Ok(mappedBook);
@@ -63,10 +59,7 @@ namespace CatalogServer.Controllers
                 Console.WriteLine("There is no book with this ID :"+id);
                 return NotFound();
             }
-            var client = _clientFactory.CreateClient();
-            var request ="http://cache_server/api/cache/book/"+id;
-            client.PostAsJsonAsync(request,book);
-            Console.WriteLine("Send the data to the CacheServer");
+           
             Console.WriteLine("The book has been sent");
             var mappedBook= _mapper.Map<BookReadDto>(book);
             return Ok(mappedBook);
@@ -83,10 +76,7 @@ namespace CatalogServer.Controllers
                 Console.WriteLine("There is no books with this topic :"+topic);
                 return NotFound();
             }
-            var client = _clientFactory.CreateClient();
-            var request ="http://cache_server/api/cache/books/"+topic;
-            client.PostAsJsonAsync(request,books);
-            Console.WriteLine("Send the data to the CacheServer");
+            
             Console.WriteLine("The books have been sent");
             var mappedBook= _mapper.Map<IEnumerable<BookReadDto>>(books);
             return Ok(mappedBook);
@@ -136,8 +126,6 @@ namespace CatalogServer.Controllers
             }
             var bookToPatch = _mapper.Map<BookUpdateDto>(bookFromDb);//mapped it to the DTO that contain the field that can the client
             
-            
-            
             //update
             pathDoc.ApplyTo(bookToPatch,ModelState);// apply the method which is update to the given field which will be extract from the
             //json request obj
@@ -154,13 +142,13 @@ namespace CatalogServer.Controllers
                 "application/json-patch+json"));
             Console.WriteLine("Sync The Other Server");
             
-            request ="http://cache_server/api/cache/"+id;
+            request ="http://client_cache_server/api/cache/"+id;
             client.DeleteAsync(request);
-            Console.WriteLine("Send delete request to the cache server");
+            Console.WriteLine("Send delete request to the cache server(delete the book)");
             
-            request ="http://cache_server/api/cache/books";
+            request ="http://client_cache_server/api/cache/books";
             client.DeleteAsync(request);
-            Console.WriteLine("Send delete request all books  to the cache server");
+            Console.WriteLine("Send delete request to the cache server(delete all of the books)");
             
             
             _mapper.Map(bookToPatch,bookFromDb);
@@ -206,7 +194,7 @@ namespace CatalogServer.Controllers
             client.PostAsJsonAsync(request,mappedBook);
             Console.WriteLine("Sync The Other Server");
             
-            request ="http://cache_server/api/cache/books";
+            request ="http://client_cache_server/api/cache/books";
             client.DeleteAsync(request);
             Console.WriteLine("send delete to the cache server");
             
@@ -258,11 +246,12 @@ namespace CatalogServer.Controllers
         
              
              var client = _clientFactory.CreateClient();
-             var request ="http://"+_hostname=="catalog_replica"?"catalog":"catalog_replica"+"/api/books/decrease/"+id;
+             var host = _hostname == "catalog_replica" ? "catalog" : "catalog_replica";
+             var request ="http://"+host+"/api/books/decrease/"+id;
              client.PostAsJsonAsync(request,"");
              Console.WriteLine("Sync The Other Server");
             
-             request ="http://cache_server/api/cache/"+id;
+             request ="http://client_cache_server/api/cache/"+id;
              client.DeleteAsync(request);
              Console.WriteLine("send delete to the cache server");
              

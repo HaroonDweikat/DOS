@@ -1,9 +1,9 @@
 version: "3"
 
 services:
-  cache_server:
-    build: ./API/CacheAPI/
-    hostname: cache_server
+  client_cache_server:
+    build: ./API/ClientServerAndCacheAPI/
+    hostname: client_cache_server
     ports:
       - 5160:80
       - 5161:443
@@ -18,7 +18,7 @@ services:
     volumes:
       - ./API/CatalogServer/CatalogAPI.db:/app/CatalogAPI.db
     depends_on:
-      - cache_server  
+      - client_cache_server  
     networks:
       - network
   catalog_server_replica:
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./API/CatalogServer/CatalogAPI_replica.db:/app/CatalogAPI_replica.db
     depends_on:
-      - cache_server  
+      - client_cache_server  
     networks:
       - network    
   order_server:
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./API/OrderAPI/OrderAPI.db:/app/OrderAPI.db
     depends_on:
-      - cache_server  
+      - client_cache_server  
       - catalog_server
     networks:
       - network
@@ -55,7 +55,7 @@ services:
     volumes:
       - ./API/OrderAPI/OrderAPI_replica.db:/app/OrderAPI_replica.db
     depends_on:
-      - cache_server  
+      - client_cache_server  
       - catalog_server
     networks:
       - network   

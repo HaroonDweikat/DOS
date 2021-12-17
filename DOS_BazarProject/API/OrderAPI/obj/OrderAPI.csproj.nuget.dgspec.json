@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/OrderAPI/OrderAPI.csproj": {}
+    "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/OrderAPI/OrderAPI.csproj": {}
   },
   "projects": {
-    "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/OrderAPI/OrderAPI.csproj": {
+    "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/OrderAPI/OrderAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/OrderAPI/OrderAPI.csproj",
+        "projectUniqueName": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/OrderAPI/OrderAPI.csproj",
         "projectName": "OrderAPI",
-        "projectPath": "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/OrderAPI/OrderAPI.csproj",
-        "packagesPath": "/home/harondwiekat/.nuget/packages/",
-        "outputPath": "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/OrderAPI/obj/",
+        "projectPath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/OrderAPI/OrderAPI.csproj",
+        "packagesPath": "/home/mahdesouqi/.nuget/packages/",
+        "outputPath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/OrderAPI/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/harondwiekat/.nuget/NuGet/NuGet.Config"
+          "/home/mahdesouqi/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"

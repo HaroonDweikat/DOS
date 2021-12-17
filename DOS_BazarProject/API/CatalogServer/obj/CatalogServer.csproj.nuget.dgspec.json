@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/CatalogServer/CatalogServer.csproj": {}
+    "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/CatalogServer/CatalogServer.csproj": {}
   },
   "projects": {
-    "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/CatalogServer/CatalogServer.csproj": {
+    "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/CatalogServer/CatalogServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/CatalogServer/CatalogServer.csproj",
+        "projectUniqueName": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/CatalogServer/CatalogServer.csproj",
         "projectName": "CatalogServer",
-        "projectPath": "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/CatalogServer/CatalogServer.csproj",
-        "packagesPath": "/home/harondwiekat/.nuget/packages/",
-        "outputPath": "/home/harondwiekat/Projects/DOS/DOS_BazarProject/API/CatalogServer/obj/",
+        "projectPath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/CatalogServer/CatalogServer.csproj",
+        "packagesPath": "/home/mahdesouqi/.nuget/packages/",
+        "outputPath": "/mnt/0e6e44af-e5d7-4180-b808-68fe5c5a2775/DotNet/Dos_Project/CatalogServer/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/harondwiekat/.nuget/NuGet/NuGet.Config"
+          "/home/mahdesouqi/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"

@@ -40,12 +40,6 @@ namespace OrderAPI.Controllers
                 return NotFound();
             }
             
-            var client = _clientFactory.CreateClient();
-            var request ="http://cache_server/api/cache/orders";
-            client.PostAsJsonAsync(request,orders);
-            Console.WriteLine("Send the data to the CacheServer");
-           
-            
             Console.WriteLine("The orders have been sent");
             var mappedOrders = _mapper.Map<IEnumerable<OrderReadDto>>(orders);
             return Ok(mappedOrders);
@@ -72,7 +66,7 @@ namespace OrderAPI.Controllers
             var request = new HttpRequestMessage(HttpMethod.Get,"http://catalog_server/api/books/checkStock/"+id );
             Console.WriteLine("Send Query request to CatalogServer");
             var response = client.Send(request);
-
+            
             return response.StatusCode;
         }
         
@@ -81,7 +75,7 @@ namespace OrderAPI.Controllers
         public void SendDecreaseRequest(Guid id)
         {
             var client = _clientFactory.CreateClient();//create a mock client to send the "check request"
-            var request = new HttpRequestMessage(HttpMethod.Post,"http://catalog_server/api/books/decrease/"+id );
+            var request = new HttpRequestMessage(HttpMethod.Post,"http://catalog_server/api/books/decreaseAndSync/"+id );
             Console.WriteLine("Send Update request to CatalogServer");
             client.Send(request);
 
@@ -123,7 +117,7 @@ namespace OrderAPI.Controllers
                return Problem("Book out of stock");
            }
 
-           return Problem("There is Something wrong !! ");
+           return Problem("There is Something wrong in adding order!! ");
 
         }
 
@@ -162,8 +156,9 @@ namespace OrderAPI.Controllers
                 var request ="http://"+host+"/api/order/addPureOrder";
                 client.PostAsJsonAsync(request,order);
                 Console.WriteLine("Sync The Other Server");
-            
-                request ="http://cache_server/api/cache/orders";
+                
+                
+                request ="http://client_cache_server/api/cache/orders";
                 client.DeleteAsync(request);
                 Console.WriteLine("send delete to the cache server");
                 
