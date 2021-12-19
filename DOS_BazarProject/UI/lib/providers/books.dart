@@ -20,34 +20,30 @@ class Books extends ChangeNotifier {
   }
 
   final String chaceUrl = 'http://localhost:5160/api/cache';
-  int catalogServerIndex = Random().nextInt(100);
-  final List<String> catalogServer = [
-    'http://localhost:5025/api/books',
-    'http://localhost:6025/api/books',
-  ];
+  final String apiUrl = 'http://localhost:5160/api';
 
   Future<void> fetchAndSetBooks() async {
     try {
       var response = await http.get(
-        Uri.parse('$chaceUrl/books'),
+        Uri.parse('$chaceUrl/GetAllBooks/books'),
         headers: {
           'Access-Control-Allow-Origin': '*',
           // "Accept": "application/json",
           'Access-Control-Allow-Methods': 'GET, HEAD'
         },
       );
-      if (response.statusCode > 400) {
-        //cache miss
-        print('response code  => ${response.statusCode}');
-        print('cache miss');
-        response = await http.get(Uri.parse(
-            '${catalogServer[catalogServerIndex % catalogServer.length]}/getAllBooks'));
-        print(
-            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}');
-        catalogServerIndex++;
-      } else {
-        print('cache hit');
-      }
+      // if (response.statusCode > 400) {
+      //   //cache miss
+      //   print('response code  => ${response.statusCode}');
+      //   print('cache miss');
+      //   response = await http.get(Uri.parse(
+      //       '${catalogServer[catalogServerIndex % catalogServer.length]}/getAllBooks'));
+      //   print(
+      //       'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}');
+      //   catalogServerIndex++;
+      // } else {
+      //   print('cache hit');
+      // }
 
       // var response = await http.get(Uri.parse(
       //     '${catalogServer[catalogServerIndex % catalogServer.length]}/getAllBooks'));
@@ -71,7 +67,7 @@ class Books extends ChangeNotifier {
         );
       });
 
-      await Future.delayed(Duration(seconds: 2)).then((value) {
+      await Future.delayed(Duration(seconds: 1)).then((value) {
         _items = loadedBooks;
       });
       notifyListeners();
@@ -81,8 +77,7 @@ class Books extends ChangeNotifier {
   }
 
   Future<List<Book>> searchBooks(String value) async {
-    String getBookByTopic =
-        'http://localhost:5025/api/books/searchByTopic/' + value;
+    String getBookByTopic = '$chaceUrl/getBooksByTopic/$value';
     if (value == '') {
       if (_items.isEmpty) {
         await fetchAndSetBooks();
@@ -94,25 +89,25 @@ class Books extends ChangeNotifier {
     // final response = await http.get(Uri.parse(getBookByTopic));
     try {
       var response = await http.get(
-        Uri.parse('$chaceUrl/$value'),
+        Uri.parse(getBookByTopic),
         headers: {
           'Access-Control-Allow-Origin': '*',
           // "Accept": "application/json",
           'Access-Control-Allow-Methods': 'GET, HEAD'
         },
       );
-      if (response.statusCode > 400) {
-        //cache miss
-        print('response code  => ${response.statusCode}');
-        print('cache miss');
-        response = await http.get(Uri.parse(
-            '${catalogServer[catalogServerIndex % catalogServer.length]}/searchByTopic/$value'));
-        print(
-            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/searchByTopic/$value');
-        catalogServerIndex++;
-      } else {
-        print('cache hit');
-      }
+      // if (response.statusCode > 400) {
+      //   //cache miss
+      //   print('response code  => ${response.statusCode}');
+      //   print('cache miss');
+      //   response = await http.get(Uri.parse(
+      //       '${catalogServer[catalogServerIndex % catalogServer.length]}/searchByTopic/$value'));
+      //   print(
+      //       'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/searchByTopic/$value');
+      //   catalogServerIndex++;
+      // } else {
+      //   print('cache hit');
+      // }
 
       final extractedDate = json.decode(response.body) as List<dynamic>;
       if (extractedDate == null) return loadedBooks;
@@ -138,16 +133,16 @@ class Books extends ChangeNotifier {
     var findedBook;
     try {
       // final response = await http.get(Uri.parse(getBookById));
-      var response = await http.get(Uri.parse('$chaceUrl/$bookId'));
-      if (response.statusCode > 400) {
-        //cache miss
-        print('response code  => ${response.statusCode}');
-        response = await http.get(Uri.parse(
-            '${catalogServer[catalogServerIndex % catalogServer.length]}/getInfoById/$bookId'));
-        print(
-            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/getInfoById/$bookId');
-        catalogServerIndex++;
-      }
+      var response = await http.get(Uri.parse('$chaceUrl/getBookInfo/$bookId'));
+      // if (response.statusCode > 400) {
+      //   //cache miss
+      //   print('response code  => ${response.statusCode}');
+      //   response = await http.get(Uri.parse(
+      //       '${catalogServer[catalogServerIndex % catalogServer.length]}/getInfoById/$bookId'));
+      //   print(
+      //       'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/getInfoById/$bookId');
+      //   catalogServerIndex++;
+      // }
       final extractedDate = json.decode(response.body) as Map<String, dynamic>;
 
       findedBook = Book(
@@ -182,15 +177,14 @@ class Books extends ChangeNotifier {
       //   body: json.encode(toJson),
       // );
       var response = await http.post(
-        Uri.parse(
-            '${catalogServer[catalogServerIndex % catalogServer.length]}/addBookToCacheAndSync'),
+        Uri.parse('$apiUrl/add/book'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(toJson),
       );
-      print(
-          'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/addBookToCacheAndSync');
-      print('data => ' + json.encode(toJson));
-      catalogServerIndex++;
+      // print(
+      //     'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/addBookToCacheAndSync');
+      // print('data => ' + json.encode(toJson));
+      // catalogServerIndex++;
 
       // print("response =>" + response.body);
       notifyListeners();
@@ -227,20 +221,20 @@ class Books extends ChangeNotifier {
         // );
         print(
             '--------------------------------------------------\n jjj => ${json.encode(jsonObj)}\n -----------------------------------');
-        await http.patch(
-          Uri.parse(
-              '${catalogServer[catalogServerIndex % catalogServer.length]}/updateCacheAndSync/$id'),
+        var response = await http.patch(
+          Uri.parse('$apiUrl/add/$id'),
           headers: {'Content-Type': 'application/json-patch+json'},
           body: json.encode(jsonObj),
         );
 
-        print(
-            'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/updateCacheAndSync/$id');
-        print('data => ' + jsonObj.toString());
-        catalogServerIndex++;
+        // print(
+        //     'catalogServer send request to replica => ${catalogServer[catalogServerIndex % catalogServer.length]}/updateCacheAndSync/$id');
+        print('data => ' + response.statusCode.toString());
+        // catalogServerIndex++;
       } catch (e) {
         print(e);
       } finally {
+        fetchAndSetBooks();
         notifyListeners();
       }
     } else

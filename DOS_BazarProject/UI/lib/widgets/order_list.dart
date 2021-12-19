@@ -21,6 +21,7 @@ class OrderList extends StatelessWidget {
         child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
+            reverse: true,
             itemCount: orders.length,
             itemBuilder: (ctx, i) {
               var book =

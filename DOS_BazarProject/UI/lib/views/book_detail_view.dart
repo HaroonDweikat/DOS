@@ -324,7 +324,22 @@ class _BookDetailViewState extends State<BookDetailView> {
                                         Provider.of<Books>(context,
                                                 listen: false)
                                             .updateBook(
-                                                loadedBook.id, _bookData);
+                                                loadedBook.id, _bookData)
+                                            .then((value) async {
+                                          await Provider.of<Books>(
+                                            context,
+                                            listen: false,
+                                          )
+                                              .findById(loadedBook.id)
+                                              .then((value) {
+                                            setState(() {
+                                              loadedBook = value;
+                                              _bookData = {};
+                                              _isLoading = false;
+                                              _isInit = false;
+                                            });
+                                          });
+                                        });
                                       });
                                     },
                               style: ElevatedButton.styleFrom(
